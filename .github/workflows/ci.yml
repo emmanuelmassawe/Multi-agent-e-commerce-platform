@@ -36,6 +36,7 @@ jobs:
       - run: uv run mypy .
       - run: uv run pytest --cov=clos.domain --cov=clos.application --cov-report=term-missing --cov-fail-under=85
       - run: npx --yes @stoplight/spectral-cli lint --ruleset .spectral.yaml docs/api/openapi.yaml
+      - run: npx --yes @asyncapi/cli validate docs/api/asyncapi.yaml
       - run: npm install --global @mermaid-js/mermaid-cli
       - run: python scripts/validate_mermaid.py
 

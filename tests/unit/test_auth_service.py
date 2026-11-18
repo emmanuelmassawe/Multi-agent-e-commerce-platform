@@ -1,8 +1,9 @@
 """Authentication use case tests using an in-memory fake repository."""
 
 import asyncio
+from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from hashlib import sha256
 from uuid import UUID, uuid4
 
@@ -10,9 +11,9 @@ import pytest
 
 from clos.adapters.security.crypto import Argon2PasswordHasher, JwtTokenIssuer
 from clos.application.auth import (
-    AuthService,
     AuthenticationError,
     AuthorizationError,
+    AuthService,
     Principal,
 )
 from clos.domain.identity import Role
@@ -33,7 +34,9 @@ class FakeAuthRepository:
         self.user = user
         self.tenant_slug = tenant_slug
         self.refresh_tokens: dict[str, FakeUser] = {}
-        self.api_keys: dict[str, tuple[FakeUser, str, list[str], datetime | None, datetime | None]] = {}
+        self.api_keys: dict[
+            str, tuple[FakeUser, str, list[str], datetime | None, datetime | None]
+        ] = {}
         self.idempotency: dict[str, tuple[str, UUID, str]] = {}
         self.revoked_keys: set[UUID] = set()
 
@@ -55,7 +58,9 @@ class FakeAuthRepository:
             self.refresh_tokens[token_hash] = self.user
 
     async def consume_refresh_token(self, tenant_id: UUID, token_hash: str) -> FakeUser | None:
-        return self.refresh_tokens.pop(token_hash, None) if tenant_id == self.user.tenant_id else None
+        return (
+            self.refresh_tokens.pop(token_hash, None) if tenant_id == self.user.tenant_id else None
+        )
 
     async def create_api_key(
         self,
@@ -64,7 +69,7 @@ class FakeAuthRepository:
         label: str,
         prefix: str,
         key_hash: str,
-        permissions: list[str],
+        permissions: Sequence[str],
         expires_at: datetime | None,
         idempotency_key: str,
         request_hash: str,
@@ -76,7 +81,7 @@ class FakeAuthRepository:
             return prior[1]
         key_id = uuid4()
         self.idempotency[idempotency_key] = (request_hash, key_id, prefix)
-        self.api_keys[prefix] = (self.user, key_hash, permissions, expires_at, None)
+        self.api_keys[prefix] = (self.user, key_hash, list(permissions), expires_at, None)
         return key_id
 
     async def revoke_api_key(self, tenant_id: UUID, key_id: UUID) -> bool:
@@ -85,7 +90,9 @@ class FakeAuthRepository:
         self.revoked_keys.add(key_id)
         return True
 
-    async def get_api_key(self, tenant_id: UUID, prefix: str):
+    async def get_api_key(
+        self, tenant_id: UUID, prefix: str
+    ) -> tuple[FakeUser, str, list[str], datetime | None, datetime | None] | None:
         if tenant_id != self.user.tenant_id:
             return None
         return self.api_keys.get(prefix)
@@ -134,7 +141,9 @@ def test_invalid_password_and_tenant_do_not_authenticate() -> None:
         with pytest.raises(AuthenticationError):
             await service.login("shop-one", "owner@example.test", "incorrect password")
         with pytest.raises(AuthenticationError):
-            await service.login("another-shop", "owner@example.test", "correct horse battery staple")
+            await service.login(
+                "another-shop", "owner@example.test", "correct horse battery staple"
+            )
 
     asyncio.run(scenario())
 
@@ -159,9 +168,7 @@ def test_api_key_is_tenant_scoped_hashed_and_idempotent() -> None:
         assert api_principal.allows("read")
         assert not api_principal.allows("manage_api_keys")
         with pytest.raises(ValueError, match="different request"):
-            await service.create_api_key(
-                principal, "renamed", ["read"], None, "request-1"
-            )
+            await service.create_api_key(principal, "renamed", ["read"], None, "request-1")
 
     asyncio.run(scenario())
 
@@ -174,4 +181,3 @@ def test_viewer_cannot_create_integration_api_keys() -> None:
             await service.create_api_key(viewer, "blocked", ["read"], None, "request-2")
 
     asyncio.run(scenario())
-

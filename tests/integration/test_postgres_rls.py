@@ -23,12 +23,8 @@ def test_postgres_rls_blocks_other_tenants_for_raw_queries() -> None:
     async def scenario() -> None:
         engine = create_async_engine(TEST_DATABASE_URL)
         factory = async_sessionmaker(engine, expire_on_commit=False)
-        tenant_a = Tenant(
-            id=new_uuid7(), slug=f"test-a-{new_uuid7().hex[:10]}", name="Test A"
-        )
-        tenant_b = Tenant(
-            id=new_uuid7(), slug=f"test-b-{new_uuid7().hex[:10]}", name="Test B"
-        )
+        tenant_a = Tenant(id=new_uuid7(), slug=f"test-a-{new_uuid7().hex[:10]}", name="Test A")
+        tenant_b = Tenant(id=new_uuid7(), slug=f"test-b-{new_uuid7().hex[:10]}", name="Test B")
         product_a = Product(
             tenant_id=tenant_a.id,
             sku="A-1",
@@ -85,4 +81,3 @@ def test_postgres_rls_blocks_other_tenants_for_raw_queries() -> None:
         await engine.dispose()
 
     asyncio.run(scenario())
-

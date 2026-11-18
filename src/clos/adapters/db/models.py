@@ -257,9 +257,7 @@ class AgentRun(TenantScoped, Base):
 
 class AutonomySetting(TenantScoped, Base):
     __tablename__ = "autonomy_settings"
-    __table_args__ = (
-        UniqueConstraint("tenant_id", "agent_name", name="uq_autonomy_tenant_agent"),
-    )
+    __table_args__ = (UniqueConstraint("tenant_id", "agent_name", name="uq_autonomy_tenant_agent"),)
 
     agent_name: Mapped[str] = mapped_column(String(80), nullable=False)
     mode: Mapped[str] = mapped_column(String(24), nullable=False, default="shadow")

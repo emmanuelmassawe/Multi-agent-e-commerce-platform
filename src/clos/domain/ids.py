@@ -20,4 +20,3 @@ def new_uuid7() -> UUID:
         | random_b
     )
     return UUID(int=value)
-

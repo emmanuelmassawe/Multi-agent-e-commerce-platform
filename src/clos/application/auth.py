@@ -1,10 +1,10 @@
 """Application use cases for login, refresh tokens, API keys, and authorization."""
 
+import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
 from hmac import compare_digest
-import json
 from uuid import UUID
 
 from clos.application.ports import (
@@ -142,16 +142,13 @@ class AuthService:
         if not principal.allows("manage_api_keys"):
             raise AuthorizationError("Permission denied")
         if not permissions or any(
-            permission not in VALID_API_KEY_PERMISSIONS
-            or not principal.allows(permission)
+            permission not in VALID_API_KEY_PERMISSIONS or not principal.allows(permission)
             for permission in permissions
         ):
             raise AuthorizationError("Requested API key permissions exceed caller permissions")
         if not idempotency_key or len(idempotency_key) > 200:
             raise ValueError("Idempotency-Key must contain between 1 and 200 characters")
-        prefix, raw_key = self._token_issuer.derive_api_key(
-            principal.tenant_id, idempotency_key
-        )
+        prefix, raw_key = self._token_issuer.derive_api_key(principal.tenant_id, idempotency_key)
         key_hash = sha256(raw_key.encode()).hexdigest()
         request_hash = sha256(
             json.dumps(
@@ -194,9 +191,7 @@ class AuthService:
             tenant_id=tenant_id,
             expires_in_seconds=self._refresh_token_days * 86400,
         )
-        await self._repository.store_refresh_token(
-            tenant_id, user_id, refresh_hash, refresh_expiry
-        )
+        await self._repository.store_refresh_token(tenant_id, user_id, refresh_hash, refresh_expiry)
         return TokenPair(access, refresh)
 
     @staticmethod
@@ -207,4 +202,3 @@ class AuthService:
             role=Role(user.role),
             email=user.email,
         )
-

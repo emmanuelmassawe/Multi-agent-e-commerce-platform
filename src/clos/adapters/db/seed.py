@@ -8,7 +8,7 @@ import os
 from sqlalchemy import select, text
 
 from clos.adapters.db.auth_repository import SqlAlchemyAuthRepository
-from clos.adapters.db.models import Tenant, User
+from clos.adapters.db.models import AutonomySetting, Tenant, User
 from clos.adapters.db.session import make_session_factory
 from clos.adapters.security.crypto import Argon2PasswordHasher
 from clos.config import settings
@@ -24,7 +24,8 @@ async def seed() -> None:
     owner_password = os.environ.get("SEED_OWNER_PASSWORD", "")
     if not tenant_slug or not owner_email or len(owner_password) < 12:
         raise RuntimeError(
-            "Set SEED_TENANT_SLUG, SEED_OWNER_EMAIL, and a SEED_OWNER_PASSWORD of at least 12 characters"
+            "Set SEED_TENANT_SLUG, SEED_OWNER_EMAIL, and a SEED_OWNER_PASSWORD "
+            "of at least 12 characters"
         )
 
     factory = make_session_factory(database_url)
@@ -55,9 +56,21 @@ async def seed() -> None:
             print(f"Seeded tenant owner for tenant {tenant_slug!r}")
         else:
             print(f"Tenant owner already exists for tenant {tenant_slug!r}")
+        configured_agents = await session.execute(
+            select(AutonomySetting.agent_name).where(AutonomySetting.tenant_id == tenant.id)
+        )
+        existing_agents = set(configured_agents.scalars().all())
+        for agent_name in ("inventory", "pricing", "logistics", "support"):
+            if agent_name not in existing_agents:
+                session.add(
+                    AutonomySetting(
+                        tenant_id=tenant.id,
+                        agent_name=agent_name,
+                        mode="shadow",
+                    )
+                )
     await factory.kw["bind"].dispose()
 
 
 if __name__ == "__main__":
     asyncio.run(seed())
-

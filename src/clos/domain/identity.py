@@ -46,4 +46,3 @@ def may_execute_write(mode: AutonomyMode, risk: RiskLevel, in_rule: bool) -> boo
     if mode == AutonomyMode.ASSISTED:
         return False
     return risk == RiskLevel.WRITE_LOW and in_rule
-

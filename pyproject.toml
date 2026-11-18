@@ -34,6 +34,9 @@ src = ["src"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+[tool.ruff.lint.per-file-ignores]
+"src/clos/apps/api/*.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

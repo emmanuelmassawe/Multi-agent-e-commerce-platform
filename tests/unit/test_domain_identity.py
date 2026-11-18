@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from clos.domain.identity import AutonomyMode, Role, RiskLevel, may_execute_write, role_allows
+from clos.domain.identity import AutonomyMode, RiskLevel, Role, may_execute_write, role_allows
 from clos.domain.ids import new_uuid7
 
 
@@ -24,4 +24,3 @@ def test_autonomy_never_executes_high_risk_without_approval() -> None:
     assert may_execute_write(AutonomyMode.AUTONOMOUS, RiskLevel.WRITE_LOW, True)
     assert not may_execute_write(AutonomyMode.AUTONOMOUS, RiskLevel.WRITE_HIGH, True)
     assert not may_execute_write(AutonomyMode.AUTONOMOUS, RiskLevel.WRITE_LOW, False)
-

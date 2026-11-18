@@ -5,14 +5,13 @@ from pathlib import Path
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.schema import CreateIndex, CreateTable
 
-from clos.adapters.db.models import Base, TENANT_TABLE_NAMES
-
+from clos.adapters.db.models import TENANT_TABLE_NAMES, Base
 
 target = Path("migrations/versions/0001_phase1_core.py")
 if target.exists():
     raise SystemExit(f"Refusing to overwrite existing revision: {target}")
 
-dialect = postgresql.dialect()
+dialect = postgresql.dialect()  # type: ignore[no-untyped-call]
 statements: list[str] = []
 for table in Base.metadata.sorted_tables:
     statements.append(str(CreateTable(table).compile(dialect=dialect)).strip())
@@ -24,6 +23,8 @@ for table in Base.metadata.sorted_tables:
 table_names = tuple(table.name for table in Base.metadata.sorted_tables)
 sql_lines = "\n".join(f"    {statement!r}," for statement in statements)
 source = f'''"""Frozen PostgreSQL schema for the Phase 1 core model."""
+
+# ruff: noqa: E501
 
 from alembic import op
 
@@ -48,7 +49,8 @@ def upgrade() -> None:
         op.execute(
             f"CREATE POLICY tenant_isolation ON \\\"{{table}}\\\" "
             "USING (tenant_id = NULLIF(current_setting('app.current_tenant_id', true), '')::uuid) "
-            "WITH CHECK (tenant_id = NULLIF(current_setting('app.current_tenant_id', true), '')::uuid)"
+            "WITH CHECK (tenant_id = NULLIF(current_setting('app.current_tenant_id', "
+            "true), '')::uuid)"
         )
     op.execute(
         "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO clos_app"
@@ -63,4 +65,3 @@ def downgrade() -> None:
 '''
 target.write_text(source, encoding="utf-8")
 print(f"Wrote frozen schema revision {target} with {len(statements)} DDL statements")
-

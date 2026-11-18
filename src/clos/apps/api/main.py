@@ -4,13 +4,15 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from clos.adapters.db.session import make_session_factory
-from clos.apps.api.auth_routes import router as auth_router
 from clos.application.auth import AuthenticationError, AuthorizationError
+from clos.apps.api.auth_routes import router as auth_router
 from clos.config import settings
 from clos.logging import configure_logging
 
@@ -75,6 +77,15 @@ async def live() -> dict[str, str]:
 
 @app.get("/health/ready", tags=["health"])
 @app.get("/v1/health/ready", tags=["health"])
-async def ready() -> dict[str, str]:
-    """Report readiness; dependency probes are added with persistence phase."""
+async def ready(request: Request) -> dict[str, str]:
+    """Report process readiness and verify PostgreSQL when configured."""
+    factory: async_sessionmaker[AsyncSession] | None = getattr(
+        request.app.state, "session_factory", None
+    )
+    if factory is not None:
+        try:
+            async with factory() as session:
+                await session.execute(text("SELECT 1"))
+        except SQLAlchemyError as exc:
+            raise HTTPException(status_code=503, detail="Database is not ready") from exc
     return {"status": "ready"}

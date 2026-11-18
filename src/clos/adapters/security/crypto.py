@@ -110,8 +110,7 @@ class JwtTokenIssuer(TokenIssuerPort):
 
     def derive_api_key(self, tenant_id: UUID, idempotency_key: str) -> tuple[str, str]:
         """Derive stable secret material so a retried idempotent request returns one key."""
-        message = f"{tenant_id}:{idempotency_key}".encode("utf-8")
+        message = f"{tenant_id}:{idempotency_key}".encode()
         prefix = hmac_new(self._secret.encode(), b"clos-prefix:" + message, sha256).hexdigest()[:12]
         secret = hmac_new(self._secret.encode(), b"clos-secret:" + message, sha256).hexdigest()
         return prefix, f"clos.{tenant_id}.{prefix}_{secret}.v1"
-

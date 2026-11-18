@@ -44,4 +44,3 @@ def test_repository_filters_reads_and_rejects_cross_tenant_writes() -> None:
         await engine.dispose()
 
     asyncio.run(scenario())
-

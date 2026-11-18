@@ -1,6 +1,5 @@
 """Tenant-scoped SQLAlchemy repositories."""
 
-from typing import Generic, TypeVar
 from uuid import UUID
 
 from sqlalchemy import select
@@ -8,10 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from clos.adapters.db.models import TenantScoped
 
-ModelT = TypeVar("ModelT", bound=TenantScoped)
 
-
-class TenantRepository(Generic[ModelT]):
+class TenantRepository[ModelT: TenantScoped]:
     """Repository that adds an explicit tenant filter to every read."""
 
     def __init__(self, session: AsyncSession, model: type[ModelT], tenant_id: UUID) -> None:
@@ -43,4 +40,3 @@ class TenantRepository(Generic[ModelT]):
         self._session.add(entity)
         await self._session.flush()
         return entity
-

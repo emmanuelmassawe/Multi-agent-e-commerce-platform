@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import os
 
-import asyncpg
+import asyncpg  # type: ignore[import-untyped]
 from sqlalchemy.engine import make_url
 
 
@@ -38,4 +38,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-

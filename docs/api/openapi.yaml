@@ -125,7 +125,7 @@ paths:
       summary: Check whether the API can serve requests
       responses:
         '200':
-          description: Process is ready (dependency checks are not wired in Phase 0)
+          description: Process and configured PostgreSQL connection are ready
           content:
             application/json:
               schema:

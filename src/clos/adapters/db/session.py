@@ -24,4 +24,3 @@ async def tenant_session(
             {"tenant_id": str(tenant_id)},
         )
         yield session
-

@@ -1,7 +1,7 @@
 """Authentication and integration API key routes."""
 
-from datetime import datetime
 from collections.abc import AsyncIterator
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
@@ -12,9 +12,9 @@ from clos.adapters.db.auth_repository import SqlAlchemyAuthRepository
 from clos.adapters.db.session import make_session_factory
 from clos.adapters.security.crypto import Argon2PasswordHasher, JwtTokenIssuer
 from clos.application.auth import (
-    AuthService,
     AuthenticationError,
     AuthorizationError,
+    AuthService,
     Principal,
     TokenPair,
 )
@@ -103,9 +103,7 @@ async def login(body: LoginBody, service: AuthService = Depends(get_auth_service
 
 
 @router.post("/auth/refresh", response_model=TokenPairBody)
-async def refresh(
-    body: RefreshBody, service: AuthService = Depends(get_auth_service)
-) -> TokenPair:
+async def refresh(body: RefreshBody, service: AuthService = Depends(get_auth_service)) -> TokenPair:
     return await service.refresh(body.refresh_token)
 
 
@@ -157,6 +155,3 @@ async def revoke_api_key(
     if not await service.revoke_api_key(principal, key_id):
         raise HTTPException(status_code=404, detail="API key not found")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-
