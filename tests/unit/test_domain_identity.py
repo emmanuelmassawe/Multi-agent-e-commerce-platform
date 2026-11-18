@@ -21,6 +21,7 @@ def test_role_permissions_are_scoped() -> None:
 
 def test_autonomy_never_executes_high_risk_without_approval() -> None:
     assert not may_execute_write(AutonomyMode.SHADOW, RiskLevel.WRITE_LOW, True)
+    assert not may_execute_write(AutonomyMode.ASSISTED, RiskLevel.WRITE_LOW, True)
     assert may_execute_write(AutonomyMode.AUTONOMOUS, RiskLevel.WRITE_LOW, True)
     assert not may_execute_write(AutonomyMode.AUTONOMOUS, RiskLevel.WRITE_HIGH, True)
     assert not may_execute_write(AutonomyMode.AUTONOMOUS, RiskLevel.WRITE_LOW, False)

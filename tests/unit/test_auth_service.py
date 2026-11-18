@@ -3,7 +3,7 @@
 import asyncio
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from hashlib import sha256
 from uuid import UUID, uuid4
 
@@ -179,5 +179,82 @@ def test_viewer_cannot_create_integration_api_keys() -> None:
         viewer = Principal(uuid4(), uuid4(), Role.VIEWER, "viewer@example.test")
         with pytest.raises(AuthorizationError):
             await service.create_api_key(viewer, "blocked", ["read"], None, "request-2")
+
+    asyncio.run(scenario())
+
+
+def test_invalid_jwt_and_unstored_refresh_token_are_rejected() -> None:
+    async def scenario() -> None:
+        service, _repo = make_service()
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_access_token("not-a-jwt")
+        with pytest.raises(AuthenticationError):
+            await service.refresh("not-a-refresh-token")
+        issuer = JwtTokenIssuer("local-test-secret-that-is-at-least-32-characters")
+        unregistered, _hash, _expiry = issuer.create_refresh_token(
+            user_id=uuid4(), tenant_id=uuid4(), expires_in_seconds=60
+        )
+        with pytest.raises(AuthenticationError):
+            await service.refresh(unregistered)
+
+    asyncio.run(scenario())
+
+
+def test_disabled_user_and_malformed_api_keys_are_rejected() -> None:
+    async def scenario() -> None:
+        service, repository = make_service()
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_api_key("malformed")
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_api_key("clos.not-a-uuid.prefix_secret.v1")
+        pair = await service.login("shop-one", "owner@example.test", "correct horse battery staple")
+        repository.user.is_active = False
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_access_token(pair.access_token)
+        with pytest.raises(AuthenticationError):
+            await service.login("shop-one", "owner@example.test", "correct horse battery staple")
+
+    asyncio.run(scenario())
+
+
+def test_api_key_wrong_hash_expiry_and_revocation_are_rejected() -> None:
+    async def scenario() -> None:
+        service, repository = make_service()
+        pair = await service.login("shop-one", "owner@example.test", "correct horse battery staple")
+        principal = await service.authenticate_access_token(pair.access_token)
+        _key_id, api_key = await service.create_api_key(principal, "test", ["read"], None, "key-1")
+        parts = api_key.split(".")
+        prefix = parts[2].partition("_")[0]
+        key = repository.api_keys[prefix]
+        repository.api_keys[prefix] = (key[0], "bad-hash", key[2], key[3], key[4])
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_api_key(api_key)
+        repository.api_keys[prefix] = (
+            key[0],
+            key[1],
+            key[2],
+            datetime(2000, 1, 1, tzinfo=UTC),
+            None,
+        )
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_api_key(api_key)
+        repository.api_keys[prefix] = (key[0], key[1], key[2], None, datetime.now(UTC))
+        with pytest.raises(AuthenticationError):
+            await service.authenticate_api_key(api_key)
+
+    asyncio.run(scenario())
+
+
+def test_owner_api_key_permissions_and_revocation() -> None:
+    async def scenario() -> None:
+        service, _repo = make_service()
+        pair = await service.login("shop-one", "owner@example.test", "correct horse battery staple")
+        owner = await service.authenticate_access_token(pair.access_token)
+        with pytest.raises(AuthorizationError):
+            await service.create_api_key(owner, "bad", ["unknown"], None, "key-2")
+        with pytest.raises(ValueError):
+            await service.create_api_key(owner, "bad", ["read"], None, "")
+        key_id, _api_key = await service.create_api_key(owner, "valid", ["read"], None, "key-3")
+        assert await service.revoke_api_key(owner, key_id)
 
     asyncio.run(scenario())
