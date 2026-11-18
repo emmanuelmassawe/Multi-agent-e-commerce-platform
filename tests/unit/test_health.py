@@ -17,4 +17,3 @@ def test_readiness() -> None:
     response = client.get("/health/ready")
     assert response.status_code == 200
     assert response.json() == {"status": "ready"}
-

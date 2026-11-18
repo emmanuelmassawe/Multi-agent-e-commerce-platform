@@ -19,4 +19,3 @@ async def live() -> dict[str, str]:
 async def ready() -> dict[str, str]:
     """Report readiness; dependency probes are added with persistence phase."""
     return {"status": "ready"}
-
