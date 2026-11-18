@@ -21,6 +21,9 @@ dashboards and alert thresholds are not measured/configured yet.
 
 ## Benchmark status
 
-Agent latency, success rate, tool-call count, real-provider tokens/cost, and recovery time are
-**not measured yet**. The local PostgreSQL checkpoint integration test verifies process termination
-and resume behavior, but it does not report a performance benchmark.
+The synthetic supervisor graph benchmark has been run: 500 serial runs across five route cases,
+100% completion, p50 4.43 ms, p95 11.66 ms, p99 21.10 ms, 198 mean synthetic tokens, and zero tool
+calls. These figures exclude database checkpoints and queue delivery. Real Gemini latency/tokens/cost,
+production agent actions, concurrency, queue throughput, and recovery time are **not measured yet**.
+The local PostgreSQL checkpoint integration test verifies process termination and resume behavior,
+but it does not report recovery performance.

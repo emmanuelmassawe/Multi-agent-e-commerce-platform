@@ -35,3 +35,27 @@ flowchart LR
   SRAG --> Memory
 ```
 
+## Phase 2 runtime
+
+```mermaid
+flowchart LR
+  Request[Untrusted merchant request] --> Supervisor[LangGraph supervisor]
+  Supervisor --> Classify[Versioned intent prompt + LLMPort]
+  Classify -->|independent routes| Inventory[Inventory subgraph]
+  Classify -->|independent routes| Pricing[Pricing subgraph]
+  Classify -->|independent routes| Logistics[Logistics subgraph]
+  Classify -->|independent routes| Support[Support subgraph]
+  Inventory --> Merge[Aggregate response]
+  Pricing --> Merge
+  Logistics --> Merge
+  Support --> Merge
+  Supervisor --> Budget[Hard run budgets]
+  Supervisor --> Checkpoints[Postgres checkpointer: tenant/run thread]
+  Tools --> Registry[Typed registry + Pydantic + policy checks]
+  Registry --> ToolCallTable[ToolCall idempotency record]
+```
+
+Agent subgraph boxes in the Phase 2 flow represent routing targets. Phase 2's dispatcher records
+which agent received the work; domain actions and business-specific subgraphs are implemented in
+Phase 3.
+

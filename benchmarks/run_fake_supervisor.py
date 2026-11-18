@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import platform
 import statistics
@@ -14,7 +15,7 @@ from pathlib import Path
 from typing import TypedDict
 from uuid import uuid4
 
-from clos.agents.llm import FakeLLM
+from clos.adapters.llm.providers import FakeLLM
 from clos.agents.supervisor.graph import build_supervisor_graph
 
 DATASET = (
@@ -24,7 +25,7 @@ DATASET = (
     "Customer support for my order",
     "Check stock and price",
 )
-REPEATS = 20
+REPEATS = 100
 
 
 class Observation(TypedDict):
@@ -83,6 +84,19 @@ def main() -> None:
             ["git", "status", "--short"], check=True, capture_output=True, text=True
         ).stdout.strip()
     )
+    source_hash = hashlib.sha256()
+    files = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    for filename in sorted(
+        file for file in files if not file.startswith(("benchmarks/results/", "docs/", ".coverage"))
+    ):
+        source_hash.update(filename.encode("utf-8"))
+        source_path = Path(filename)
+        source_hash.update(source_path.read_bytes() if source_path.exists() else b"<deleted>")
     measurements = asyncio.run(measure())
     latencies = [float(item["latency_ms"]) for item in measurements]
     completed = sum(item["status"] == "completed" for item in measurements)
@@ -91,6 +105,7 @@ def main() -> None:
         "date_utc": stamp.isoformat(),
         "git_sha": git_sha,
         "working_tree_dirty": dirty,
+        "source_tree_sha256": source_hash.hexdigest(),
         "environment": {
             "os": platform.platform(),
             "machine": platform.machine(),
@@ -98,12 +113,13 @@ def main() -> None:
             "python": platform.python_version(),
             "langgraph": version("langgraph"),
             "langgraph_checkpoint_postgres": version("langgraph-checkpoint-postgres"),
+            "google_genai": version("google-genai"),
             "llm": "FakeLLM (synthetic; no provider call)",
         },
         "dataset_size": len(DATASET),
         "runs": len(measurements),
         "repeats_per_case": REPEATS,
-        "command": "uv run python benchmarks/run_fake_supervisor.py",
+        "command": ".venv\\Scripts\\python.exe benchmarks/run_fake_supervisor.py",
         "summary": {
             "success_rate": completed / len(measurements),
             "latency_ms_p50": percentile(latencies, 0.50),

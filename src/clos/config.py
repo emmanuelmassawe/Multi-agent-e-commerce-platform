@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     database_admin_url: str | None = None
     rabbitmq_url: str | None = None
     auth_jwt_secret: SecretStr | None = None
+    gemini_api_key: SecretStr | None = None
+    gemini_fallback_api_keys: SecretStr | None = None
+    gemini_model: str = "gemini-3.8-flash"
+    gemini_fallback_model: str = "gemini-3.6-flash"
     access_token_seconds: int = 900
     refresh_token_days: int = 30
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

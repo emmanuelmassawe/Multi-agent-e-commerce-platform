@@ -11,7 +11,7 @@ from uuid import UUID
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from sqlalchemy.engine import make_url
 
-from clos.agents.llm import FakeLLM
+from clos.adapters.llm.providers import FakeLLM
 from clos.agents.supervisor.graph import build_supervisor_graph, checkpoint_config
 
 

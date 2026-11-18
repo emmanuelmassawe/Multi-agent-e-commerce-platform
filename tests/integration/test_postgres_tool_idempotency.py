@@ -13,7 +13,12 @@ from clos.adapters.db.models import AgentRun, Tenant, ToolCall
 from clos.adapters.db.session import tenant_session
 from clos.adapters.db.tool_idempotency import SQLToolIdempotencyStore
 from clos.agents.budgets import BudgetEnforcer, BudgetLimits
-from clos.agents.tools import ToolContext, ToolRegistry, ToolSpec
+from clos.agents.tools import (
+    ToolContext,
+    ToolIdempotencyConflict,
+    ToolRegistry,
+    ToolSpec,
+)
 from clos.domain.identity import RiskLevel
 
 DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
@@ -58,6 +63,8 @@ def test_tool_result_is_persisted_and_not_executed_twice() -> None:
         first = await registry.execute("db_read", {"value": 10}, context)
         second = await registry.execute("db_read", {"value": 10}, context)
         assert first == second == {"value": 10}
+        with pytest.raises(ToolIdempotencyConflict):
+            await registry.execute("db_read", {"value": 11}, context)
         assert calls == 1
         async with tenant_session(sessions, tenant_id) as session:
             rows = await session.execute(select(ToolCall).where(ToolCall.tenant_id == tenant_id))

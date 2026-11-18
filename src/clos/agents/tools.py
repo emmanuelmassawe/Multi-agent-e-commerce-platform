@@ -2,6 +2,7 @@
 
 import asyncio
 import random
+import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Protocol
@@ -25,6 +26,10 @@ class ToolPolicyError(ToolError):
     """Autonomy, approval, or kill-switch policy rejected a tool call."""
 
 
+class ToolIdempotencyConflict(ToolError):
+    """The same idempotency key was reused with different validated input."""
+
+
 class IdempotencyPort(Protocol):
     async def run_once(
         self,
@@ -46,7 +51,7 @@ class InMemoryIdempotencyStore:
     """Test fake only; production callers must inject a durable store."""
 
     def __init__(self) -> None:
-        self._results: dict[str, object] = {}
+        self._results: dict[str, tuple[dict[str, object], object]] = {}
         self._guard = asyncio.Lock()
         self._locks: dict[str, asyncio.Lock] = {}
 
@@ -58,14 +63,16 @@ class InMemoryIdempotencyStore:
         risk_level: RiskLevel,
         input_data: dict[str, object],
     ) -> object:
-        del risk_level, input_data
         async with self._guard:
             lock = self._locks.setdefault(key, asyncio.Lock())
         async with lock:
             if key in self._results:
-                return self._results[key]
+                previous_input, previous_result = self._results[key]
+                if previous_input != input_data:
+                    raise ToolIdempotencyConflict("Idempotency key reused with different input")
+                return previous_result
             result = await action()
-            self._results[key] = result
+            self._results[key] = (input_data, result)
             return result
 
 
@@ -120,6 +127,7 @@ class ToolRegistry:
         self._jitter = jitter
         self._sleep = sleep
         self._approval_verifier = approval_verifier
+        self._started_at = time.monotonic()
 
     def register(self, spec: ToolSpec) -> None:
         if spec.name in self._tools:
@@ -151,9 +159,13 @@ class ToolRegistry:
         async def run_with_retries() -> object:
             self._budget.record_tool_call()
             for attempt in range(spec.max_retries + 1):
+                elapsed = time.monotonic() - self._started_at
+                self._budget.check_time(elapsed)
+                remaining = self._budget.limits.max_wall_seconds - elapsed
                 try:
                     return await asyncio.wait_for(
-                        spec.handler(parsed, context), timeout=spec.timeout_seconds
+                        spec.handler(parsed, context),
+                        timeout=min(spec.timeout_seconds, remaining),
                     )
                 except Exception:
                     if attempt == spec.max_retries:

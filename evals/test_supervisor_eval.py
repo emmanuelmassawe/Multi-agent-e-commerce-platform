@@ -4,8 +4,8 @@ from uuid import uuid4
 
 import pytest
 
+from clos.adapters.llm.providers import FakeLLM
 from clos.agents.budgets import BudgetLimits
-from clos.agents.llm import FakeLLM
 from clos.agents.supervisor.graph import build_supervisor_graph
 
 

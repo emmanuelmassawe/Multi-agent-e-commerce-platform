@@ -30,12 +30,14 @@ LLM token/cost measurements are not measured yet.
 Use a typed tool registry and inject a tenant-scoped idempotency port. Production persistence uses a
 Postgres transaction advisory lock and `tool_calls` record; tests use a deterministic in-memory fake.
 Every write checks autonomy and kill-switch policy. `write_high` requires an explicit approval ID.
-Enforce token, step, tool-call, and wall-clock limits with a hard stop.
+The ID must match a persisted approved request for that tenant, run, and tool. Enforce token, step,
+tool-call, and wall-clock limits with a hard stop.
 
 ## Consequences
 
 Tools must pass a stable idempotency key to downstream systems that support it. A worker crash during
 an external side effect can cause a retry after the database transaction rolls back, so side-effecting
-adapters still need downstream idempotency. Phase 4 will bind approval IDs to persisted approval
-records and re-check policy before execution. No real model provider or production token budget was
-selected because the owner has not supplied that context.
+adapters still need downstream idempotency. Phase 4 will add the graph interrupt, approval lifecycle,
+and resume flow. No production token budget was selected because the owner has not supplied numeric
+budgets. Gemini is the selected initial provider;
+the adapter uses environment-only keys and tests remain synthetic.

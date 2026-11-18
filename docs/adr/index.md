@@ -14,6 +14,6 @@
 | [0010](0010-observability.md) | Langfuse, OTel, Prometheus | proposed |
 | [0011](0011-guardrails.md) | Guardrails interface | proposed |
 | [0012](0012-sandbox.md) | Sandboxed execution | proposed |
-| [0013](0013-llm-port-fallback.md) | LLM port and fallback | accepted |
+| [0013](0013-llm-port-fallback.md) | LLM port, Gemini adapter, and key fallback | accepted |
 | [0015](0015-agent-runtime-budget-and-tools.md) | Agent runtime budgets and typed tools | accepted |
 

@@ -1,35 +1,9 @@
-"""Provider-neutral LLM port, adapter, fallback, and deterministic fake."""
+"""Provider call adapter, fallback wrapper, and deterministic fake LLM."""
 
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Protocol
 
-from pydantic import BaseModel, ConfigDict
-
-
-class LLMRequest(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    task: str
-    prompt: str
-    tenant_id: str
-    run_id: str
-    max_output_tokens: int = 2_048
-
-
-class LLMResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    text: str
-    model: str
-    input_tokens: int
-    output_tokens: int
-    cost_usd: float | None = None
-
-
-class LLMPort(Protocol):
-    async def complete(self, request: LLMRequest) -> LLMResponse: ...
-
+from clos.application.llm import LLMPort, LLMRequest, LLMResponse
 
 ProviderCall = Callable[[LLMRequest], Awaitable[LLMResponse]]
 
@@ -43,8 +17,6 @@ class ProviderLLMAdapter:
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
         response = await self.call(request)
-        if response.input_tokens < 0 or response.output_tokens < 0:
-            raise ValueError("Provider returned negative token usage")
         return response.model_copy(update={"model": response.model or self.provider_name})
 
 
@@ -58,6 +30,12 @@ class FallbackLLM:
             return await self.primary.complete(request)
         except Exception:
             return await self.fallback.complete(request)
+
+    async def aclose(self) -> None:
+        for provider in (self.primary, self.fallback):
+            close = getattr(provider, "aclose", None)
+            if close is not None:
+                await close()
 
 
 @dataclass(slots=True)
@@ -95,10 +73,6 @@ class FakeLLM:
             text=result,
             model=self.model,
             input_tokens=max(1, len(request.prompt.split())),
-            output_tokens=min(self._token_count(result), request.max_output_tokens),
+            output_tokens=min(max(1, len(result.split())), request.max_output_tokens),
             cost_usd=0,
         )
-
-    @staticmethod
-    def _token_count(text: str) -> int:
-        return max(1, len(text.split()))

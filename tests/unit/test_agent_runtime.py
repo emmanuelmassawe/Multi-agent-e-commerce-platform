@@ -1,22 +1,34 @@
 """Unit coverage for budgets, LLM fallback, and policy-gated typed tools."""
 
 import asyncio
+from types import SimpleNamespace
+from typing import Any, cast
 from uuid import UUID, uuid4
 
 import pytest
 from pydantic import BaseModel
 
+from clos.adapters.llm.factory import build_worker_llm
+from clos.adapters.llm.gemini import (
+    GeminiAPIAdapter,
+    GeminiProviderUnavailable,
+    KeyFallbackLLM,
+    minimize_prompt,
+)
+from clos.adapters.llm.providers import FakeLLM, FallbackLLM, ProviderLLMAdapter
 from clos.agents.budgets import BudgetEnforcer, BudgetExceeded, BudgetLimits
-from clos.agents.llm import FakeLLM, FallbackLLM, LLMRequest, LLMResponse
 from clos.agents.tools import (
     ApprovalVerifierPort,
     InMemoryIdempotencyStore,
     ToolContext,
+    ToolIdempotencyConflict,
     ToolInputError,
     ToolPolicyError,
     ToolRegistry,
     ToolSpec,
 )
+from clos.application.llm import LLMRequest, LLMResponse
+from clos.config import Settings
 from clos.domain.identity import AutonomyMode, RiskLevel
 
 
@@ -41,8 +53,6 @@ def test_fallback_llm_uses_fake_after_provider_failure() -> None:
         raise RuntimeError("provider unavailable")
 
     async def scenario() -> None:
-        from clos.agents.llm import ProviderLLMAdapter
-
         llm = FallbackLLM(ProviderLLMAdapter("primary", fail), FakeLLM())
         result = await llm.complete(
             LLMRequest(task="respond", prompt="hello", tenant_id="t", run_id="r")
@@ -51,6 +61,91 @@ def test_fallback_llm_uses_fake_after_provider_failure() -> None:
         assert result.cost_usd == 0
 
     asyncio.run(scenario())
+
+
+def test_gemini_key_pool_falls_back_without_exposing_provider_details() -> None:
+    async def scenario() -> None:
+        pool = KeyFallbackLLM((FakeLLM(fail=True), FakeLLM(model="fallback-key")))
+        result = await pool.complete(
+            LLMRequest(task="respond", prompt="hello", tenant_id="t", run_id="r")
+        )
+        assert result.model == "fallback-key"
+
+        failed_pool = KeyFallbackLLM((FakeLLM(fail=True), FakeLLM(fail=True)))
+        with pytest.raises(GeminiProviderUnavailable, match="2 configured Gemini keys"):
+            await failed_pool.complete(
+                LLMRequest(task="respond", prompt="hello", tenant_id="t", run_id="r")
+            )
+
+    asyncio.run(scenario())
+
+
+def test_gemini_prompt_minimization_redacts_common_direct_identifiers() -> None:
+    result = minimize_prompt(
+        "Email jane.doe@example.com or call +255 712 345 678; api_key=do-not-send-this"
+    )
+    assert "jane.doe@example.com" not in result
+    assert "+255 712 345 678" not in result
+    assert "do-not-send-this" not in result
+    assert "[EMAIL]" in result
+    assert "[PHONE_OR_NUMBER]" in result
+    assert "[CREDENTIAL]" in result
+
+
+def test_gemini_adapter_passes_bounded_redacted_prompt_and_records_usage() -> None:
+    class FakeGeminiClient:
+        def __init__(self) -> None:
+            self.aio = self
+            self.models = self
+            self.contents = ""
+            self.requested_model = ""
+
+        async def generate_content(
+            self, *, model: str, contents: str, config: object
+        ) -> SimpleNamespace:
+            self.contents = contents
+            self.requested_model = model
+            return SimpleNamespace(
+                text="safe response",
+                model_version="gemini-test",
+                usage_metadata=SimpleNamespace(prompt_token_count=9, candidates_token_count=2),
+            )
+
+        async def aclose(self) -> None:
+            return None
+
+    async def scenario() -> None:
+        client = FakeGeminiClient()
+        adapter = GeminiAPIAdapter(cast(Any, client), "gemini-test-config")
+        result = await adapter.complete(
+            LLMRequest(
+                task="respond",
+                prompt="Contact jane.doe@example.com",
+                tenant_id="tenant-id",
+                run_id="run-id",
+                max_output_tokens=12,
+            )
+        )
+        assert client.requested_model == "gemini-test-config"
+        assert "jane.doe@example.com" not in client.contents
+        assert "[EMAIL]" in client.contents
+        assert result.model == "gemini-test"
+        assert result.input_tokens == 9
+        assert result.output_tokens == 2
+        assert result.cost_usd is None
+
+    asyncio.run(scenario())
+
+
+def test_worker_llm_uses_fake_only_in_local_modes_and_requires_a_production_key() -> None:
+    local = build_worker_llm(
+        Settings(app_env="local", gemini_api_key=None, gemini_fallback_api_keys=None)
+    )
+    assert isinstance(local, FakeLLM)
+    with pytest.raises(RuntimeError, match="GEMINI_API_KEY"):
+        build_worker_llm(
+            Settings(app_env="production", gemini_api_key=None, gemini_fallback_api_keys=None)
+        )
 
 
 class Input(BaseModel):
@@ -75,6 +170,8 @@ def test_typed_tool_validates_gates_risk_and_reuses_idempotent_result() -> None:
         first = await registry.execute("read_value", {"value": 4}, context)
         second = await registry.execute("read_value", {"value": 4}, context)
         assert first == second == {"doubled": 8}
+        with pytest.raises(ToolIdempotencyConflict):
+            await registry.execute("read_value", {"value": 5}, context)
         assert calls == 1
 
         async def write_handler(_data: BaseModel, _context: ToolContext) -> object:

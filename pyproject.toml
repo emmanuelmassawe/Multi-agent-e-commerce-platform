@@ -17,6 +17,7 @@ dependencies = [
   "langgraph>=0.2,<2",
   "langgraph-checkpoint-postgres>=2,<4",
   "celery>=5.4,<6",
+  "google-genai>=1,<2",
 ]
 
 [dependency-groups]

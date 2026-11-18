@@ -1,0 +1,5183 @@
+{
+  "date_utc": "2026-11-18T17:47:19.321783+00:00",
+  "git_sha": "a563c1fe70a7adbd4bc1d29f096477ce424554f1",
+  "working_tree_dirty": true,
+  "source_tree_sha256": "af8684ec2f4f1539651a18f0909ea5cf9fccfc9fcbdaa4cf71889672ee614a20",
+  "environment": {
+    "os": "Windows-11-10.0.22000-SP0",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 142 Stepping 9, GenuineIntel",
+    "python": "3.12.15",
+    "langgraph": "1.2.22",
+    "langgraph_checkpoint_postgres": "3.2.1",
+    "google_genai": "1.75.0",
+    "llm": "FakeLLM (synthetic; no provider call)"
+  },
+  "dataset_size": 5,
+  "runs": 500,
+  "repeats_per_case": 100,
+  "command": ".venv\\Scripts\\python.exe benchmarks/run_fake_supervisor.py",
+  "summary": {
+    "success_rate": 1.0,
+    "latency_ms_p50": 4.4290999649092555,
+    "latency_ms_p95": 11.658200004603714,
+    "latency_ms_p99": 21.10240003094077,
+    "mean_tokens_per_run": 198,
+    "mean_tool_calls_per_run": 0
+  },
+  "by_route_case": {
+    "Check stock at my warehouse": {
+      "agents": [
+        "inventory"
+      ],
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 6.593799975235015,
+      "latency_ms_p95": 9.149999998044223,
+      "mean_tool_calls": 0
+    },
+    "Compare our price with competitors": {
+      "agents": [
+        "pricing"
+      ],
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 4.9300999962724745,
+      "latency_ms_p95": 11.217800027225167,
+      "mean_tool_calls": 0
+    },
+    "Track my shipment delivery": {
+      "agents": [
+        "logistics"
+      ],
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 3.3310999860987067,
+      "latency_ms_p95": 4.962799954228103,
+      "mean_tool_calls": 0
+    },
+    "Customer support for my order": {
+      "agents": [
+        "support"
+      ],
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 3.334100008942187,
+      "latency_ms_p95": 5.058299982920289,
+      "mean_tool_calls": 0
+    },
+    "Check stock and price": {
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 6.9005999830551445,
+      "latency_ms_p95": 19.64159996714443,
+      "mean_tool_calls": 0
+    }
+  },
+  "observations": [
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 54.11540000932291,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.91479995334521,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.875000020954758,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.939399998169392,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.951200029812753,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 30.055299983359873,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.75019999127835,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.710500038228929,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.230600051116198,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.043900015763938,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.26290000602603,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.346900005359203,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.345899997744709,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.750000000465661,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.902900000568479,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.788299990352243,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.124500010628253,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.593799975235015,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.002600003033876,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.280799978412688,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.578800024930388,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.589500000700355,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.489799950737506,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.338900002650917,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.555799976922572,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.001899997703731,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.719299988821149,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.9210000219754875,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 9.149999998044223,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.718100001104176,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.419600035063922,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.397399993147701,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.179300009738654,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.446100014727563,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.587499985471368,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.65989999147132,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.152500038500875,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.566800049971789,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.420399982947856,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.28059995546937,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.0937999514862895,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.828000023029745,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.901999983005226,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.479899991769344,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.213599979877472,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.797900026664138,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.565700052306056,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.604399987030774,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.309100008569658,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 9.664899960625917,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.61530003324151,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.383500051219016,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.483000015374273,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.742600002326071,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.038300052750856,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.003699974622577,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.056700028944761,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.020799977704883,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.47450001956895,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.2826000028289855,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.728299973066896,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.9074999880976975,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.261600017547607,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.941699983552098,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.153500009328127,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.75330000417307,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 9.54890000866726,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 11.907199979759753,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.808799982536584,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.8313000267371535,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 3.9399999659508467,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 3.8742999895475805,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.393099971115589,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 3.433500009123236,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 3.6054999800398946,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.553000013809651,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.2194999773055315,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.251000005751848,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.297599979210645,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.367099984548986,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 5.949400016106665,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.257100020069629,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.017400010023266,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.259699970949441,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 8.343299967236817,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.797599955461919,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.438400003593415,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 3.7579999770969152,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.305499991867691,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.794200009200722,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.046700021717697,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.239399975631386,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 6.373599986545742,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.268800024874508,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.199999966658652,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.045200036372989,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.231699975207448,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.626900015864521,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 7.393100007902831,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock at my warehouse",
+      "agents": [
+        "inventory"
+      ],
+      "latency_ms": 4.17799997376278,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.768099985085428,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 9.059900010470301,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.313900008331984,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 7.4489000253379345,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.2211000216193497,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.0598000157624483,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.053400014527142,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.073600004427135,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.9300999962724745,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.1098999897949398,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.297200008295476,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.123100021388382,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 7.834799995180219,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.192500025965273,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.224599979352206,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 7.460499997250736,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.388799996580929,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.81830000737682,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 7.654200016986579,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.832100006751716,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 10.277499968651682,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.1629999866709113,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.0607999651692808,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.126300035044551,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.7786999600939453,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.570200002286583,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 15.128500002902001,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 13.241499953437597,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 9.633700014092028,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 11.658200004603714,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 9.025199979078025,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 8.301599998958409,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 8.162700047250837,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 8.619699976406991,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.995900031644851,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.213199987541884,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.050699972547591,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 11.247900023590773,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.858100008685142,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.782600026577711,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 7.391400053165853,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.771600001025945,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 8.656800026074052,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.339800041634589,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.027199968229979,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.366599991451949,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.500999988522381,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.4963999642059207,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.3694000341929495,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.197100002784282,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.1364999595098197,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.414099967107177,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.608799973037094,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.2676999950781465,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.878599990159273,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 8.228299964684993,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.069499999284744,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 13.839099963661283,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 11.217800027225167,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.336099992040545,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.266299984417856,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.472599994391203,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.3546999911777675,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.2603999716229737,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.9263999573886395,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.626600013580173,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.825900017749518,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.898599978536367,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.216300021857023,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.009700031019747,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 7.851200003642589,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.161300010513514,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.477699975017458,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 8.340100001078099,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.025000020395964,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.240700043737888,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.066199984867126,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.9349999967962503,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.8374000103212893,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.821600006427616,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.3254000009037554,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.185400030110031,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.8577999910339713,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.042600001208484,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.956200041808188,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.8817999991588295,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.066199995577335,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.5369000397622585,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 2.981300000101328,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.0024999869056046,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.023100027348846,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 6.010800017975271,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.679700010456145,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.38399997074157,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 5.022900004405528,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.3761999802663922,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.0256000463850796,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.0473999795503914,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 3.393299994058907,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Compare our price with competitors",
+      "agents": [
+        "pricing"
+      ],
+      "latency_ms": 4.019800049718469,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.9483000291511416,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.3584999619051814,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.8831999991089106,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.172900051344186,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.822299990337342,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.3104000031016767,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.4768999903462827,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2147999736480415,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.614799992647022,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2561999978497624,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.195500001311302,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.291000030003488,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 5.687700002454221,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.3310999860987067,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1291000195778906,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.091599956154823,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.3985000336542726,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.246999975293875,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.548300010152161,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2296000281348825,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.234500007238239,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.4684999845921993,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.971600021235645,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.4072999842464924,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2671999651938677,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.256099997088313,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.7065999931655824,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.337399975862354,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.277599986176938,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.4623999963514507,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.216099983546883,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.3484000489115715,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.7793999654240906,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2218999695032835,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2375999726355076,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.332899989094585,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.039300023578107,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2415000023320317,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.273600003216416,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.0928999767638743,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.467500024475157,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1225000275298953,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1023999908939004,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.206400026101619,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.222699975594878,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.1262999875471,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1228999723680317,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.056699992157519,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1029999954625964,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.459000028669834,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.879300016909838,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.200999984983355,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.0356000061146915,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2854999881237745,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.5142000415362418,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.175299963913858,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1170000438578427,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.005300008226186,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 2.9648999916389585,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.922499996609986,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.917000023648143,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.091899969149381,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.3178999912925065,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 5.732499994337559,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 6.4091000240296125,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.590899985283613,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.131499979645014,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.962799954228103,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.867999999783933,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2435000175610185,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.160000022035092,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.558599972166121,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.6860000109300017,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 2.958199998829514,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1231999746523798,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.0057000112719834,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2267000060528517,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 5.031200009398162,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.918499976862222,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.549200017005205,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.9052999927662313,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.55589999910444,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.5463999956846237,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.835699986666441,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2177999964915216,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.595399950630963,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 2.924299973528832,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 2.959800011012703,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 2.9709000373259187,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.3214999712072313,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.8758000009693205,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1761000282131135,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.075400018133223,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1929999822750688,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.42989997100085,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.626000009011477,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2057000207714736,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.1706999870948493,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 3.2743000192567706,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Track my shipment delivery",
+      "agents": [
+        "logistics"
+      ],
+      "latency_ms": 4.168300016317517,
+      "status": "completed",
+      "tokens": 193,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.799799993634224,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 6.055100006051362,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 5.058299982920289,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 5.064899974968284,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.066199995577335,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.5364999785088003,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.7718999665230513,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.6240000044927,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.086899989284575,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.975400013383478,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9627999756485224,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.330299980007112,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.7011999995447695,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9698999715037644,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9069000156596303,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.928700007032603,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.279299988411367,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.3043999574147165,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.1297000241465867,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9167000320740044,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.986699983011931,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.345700028352439,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.8209999911487103,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.8900000508874655,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.2975999638438225,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 5.381800001487136,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.735899972729385,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.267600015737116,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.6646000226028264,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 5.4923000279814005,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.919500031974167,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.3605999778956175,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9333000420592725,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.642000025138259,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.5102000110782683,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.065299999434501,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.234800009522587,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.1716999947093427,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.962000017054379,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.796099976170808,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.2253999961540103,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.075399959925562,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.1121999491006136,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.3430999610573053,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9746999498456717,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.725199949461967,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.334100008942187,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.1402999884448946,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.5538999838754535,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.091100021265447,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.977500029373914,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9205000028014183,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.477699985727668,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.5857000038959086,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.8915000148117542,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.497700032312423,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.959400007966906,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.4784000017680228,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.629399976693094,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.154600039124489,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.061499970499426,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.4320999984629452,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.408099990338087,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.3141999738290906,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.2467999844811857,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.21649998659268,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.8262000307440758,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 5.384800024330616,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.703199967276305,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.2386999810114503,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.217499983496964,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.431299981661141,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.981600002385676,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.114999970421195,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.0520999571308494,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9928000294603407,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.066299996338785,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.4912999835796654,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.0813999474048615,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.094899991992861,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.008500032592565,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.2654000096954405,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.209699982311577,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.1329000485129654,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.977199968881905,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.184499975759536,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.374300013296306,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.6855999496765435,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.173500008415431,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.181199998129159,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.865299979224801,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.2250999938696623,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.115299972705543,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.7826999905519187,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.383199975360185,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 4.524399992078543,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.9923999682068825,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 2.982200006954372,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.4103000070899725,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Customer support for my order",
+      "agents": [
+        "support"
+      ],
+      "latency_ms": 3.119800006970763,
+      "status": "completed",
+      "tokens": 196,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.4578000088222325,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 18.380099965725094,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.240900002419949,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.666400004178286,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 5.200599960517138,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.150800014846027,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.717200041748583,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.909000010229647,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.216899957507849,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.30109997978434,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.743499983102083,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.014400008600205,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.123700025957078,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 5.160499946214259,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.7536000018008053,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.7507000379264355,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.673899977002293,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.4141000360250473,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.4200000227428973,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.767999995034188,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.3263000077567995,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.854300001170486,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.112299997359514,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.397999971639365,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.465300007723272,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.062799969688058,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 21.08490001410246,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.84659995790571,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.086100035347044,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.17240002611652,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.495799985714257,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.582099965773523,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.798499983735383,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.9941000286489725,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.686400013975799,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.7453999975696206,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.33059998229146,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.54399996669963,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.5202000183053315,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.3202999620698392,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.4290999649092555,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.6792000173591077,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.7642000135965645,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.5063999821431935,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.191599960904568,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 3.4995999885722995,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.421099998988211,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 5.703200004063547,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 4.34849999146536,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 5.723000038415194,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.213699991349131,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.886200048029423,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.9005999830551445,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 5.485999980010092,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.178799995221198,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 12.197799980640411,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.311899950262159,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.828799960203469,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.731300021987408,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.644299999810755,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.687199955806136,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 22.06539997132495,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.309800003189594,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 18.828600004781038,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 16.855699999723583,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 17.32129999436438,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 26.982099981978536,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.914500009268522,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.248299989849329,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 6.657699996139854,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.645400008186698,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.73549999576062,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 14.307999983429909,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 19.64159996714443,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.021900012157857,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 12.403800035826862,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.9165000137873,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 11.040199955459684,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 15.031500020995736,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.764499983750284,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 21.70990000013262,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 11.300800018943846,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.587100019212812,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.921200002077967,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 12.498500000219792,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.281699953135103,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.881400037556887,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.805500004906207,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.08070000493899,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.792299951892346,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.542100036516786,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 13.808899966534227,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.61700000334531,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 12.832599983084947,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 14.175300020724535,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 21.10240003094077,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 13.064899947494268,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 7.272300019394606,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 8.096600009594113,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    },
+    {
+      "message_case": "Check stock and price",
+      "agents": [
+        "inventory",
+        "pricing"
+      ],
+      "latency_ms": 9.260700026061386,
+      "status": "completed",
+      "tokens": 209,
+      "tool_calls": 0
+    }
+  ]
+}

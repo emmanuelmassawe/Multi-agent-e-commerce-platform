@@ -1,6 +1,6 @@
 # CLOS architecture diagrams
 
-Diagrams are maintained as Mermaid source. Render validation is a CI requirement; it is not configured yet.
+Diagrams are maintained as Mermaid source and rendered in CI.
 
 - [01 — C4 context](01-context.md)
 - [02 — C4 containers](02-containers.md)

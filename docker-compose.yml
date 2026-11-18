@@ -20,6 +20,10 @@ services:
       APP_ENV: local
       DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@postgres:5432/clos
       RABBITMQ_URL: amqp://clos:clos@rabbitmq:5672//
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_FALLBACK_API_KEYS: ${GEMINI_FALLBACK_API_KEYS:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
+      GEMINI_FALLBACK_MODEL: ${GEMINI_FALLBACK_MODEL:-gemini-3.6-flash}
     command: ["python", "-m", "clos.apps.worker.main"]
     depends_on:
       postgres: { condition: service_healthy }

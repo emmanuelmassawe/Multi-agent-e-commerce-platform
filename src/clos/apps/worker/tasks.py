@@ -8,7 +8,7 @@ from sqlalchemy.engine import make_url
 
 from clos.adapters.db.agent_runs import SQLAgentRunRepository
 from clos.adapters.db.session import make_session_factory
-from clos.agents.llm import FakeLLM
+from clos.adapters.llm.factory import build_worker_llm
 from clos.agents.supervisor.graph import build_supervisor_graph
 from clos.application.runs import execute_supervisor_run
 from clos.apps.worker.main import celery_app
@@ -22,14 +22,13 @@ def _psycopg_url(url: str) -> str:
 async def _execute(tenant_id: UUID, run_id: UUID, message: str) -> dict[str, object]:
     if settings.database_url is None:
         raise RuntimeError("DATABASE_URL is required by the agent worker")
-    if settings.app_env not in {"local", "test", "development"}:
-        raise RuntimeError("A production LLM provider adapter has not been configured")
+    llm = build_worker_llm(settings)
     factory = make_session_factory(settings.database_url)
     try:
         async with AsyncPostgresSaver.from_conn_string(
             _psycopg_url(settings.database_url)
         ) as saver:
-            graph = build_supervisor_graph(FakeLLM(), checkpointer=saver)
+            graph = build_supervisor_graph(llm, checkpointer=saver)
             return await execute_supervisor_run(
                 graph,
                 SQLAgentRunRepository(factory),
@@ -38,6 +37,9 @@ async def _execute(tenant_id: UUID, run_id: UUID, message: str) -> dict[str, obj
                 message=message,
             )
     finally:
+        close = getattr(llm, "aclose", None)
+        if close is not None:
+            await close()
         await factory.kw["bind"].dispose()
 
 

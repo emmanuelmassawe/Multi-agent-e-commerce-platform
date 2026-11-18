@@ -21,8 +21,9 @@ Target countries and languages, first commerce/carrier integrations, model provi
 
 ## Phase 2
 
-- Read all files under `docs/my-docs/` on 2026-11-18. Only the README, empty directories, and unfilled requirement/business-rule templates are present; no provider, merchant policy, or budget values were specified.
-- The LLM provider adapter remains provider-neutral until a vendor and credentials are supplied. Tests use deterministic synthetic responses only; synthetic token/cost records are never represented as real provider measurements.
+- Read all files under `docs/my-docs/` at phase start on 2026-11-18; the requirement and business-rule templates were blank then. A later owner edit specified Gemini free tier and fallback API keys. CLOS now uses a Gemini adapter behind `LLMPort`, with environment-only key rotation. No key value was supplied or stored in the repository.
+- Tests use deterministic synthetic responses only; synthetic token/cost records are never represented as real provider measurements. Free-tier requests may be used to improve Google products; direct email, phone-number, and credential-shaped strings are redacted, but this is not full PII detection. Avoid customer-confidential prompts until the privacy controls are reviewed.
 - PostgreSQL checkpoint thread IDs are derived as `<tenant_uuid>:<run_uuid>` to scope reads and writes. The checkpointer's internal tables are not tenant-row-RLS tables; app code must only construct checkpoint configs through `checkpoint_config`.
-- Supervisor routing and checkpoint resume are implemented and the PostgreSQL recovery test terminates and replaces a worker subprocess. Recovery latency is not measured yet. Business agent actions and production provider integration remain later implementation slices; a public run-submission endpoint is not part of this slice.
+- Supervisor routing and checkpoint resume are implemented and the PostgreSQL recovery test terminates and replaces a worker subprocess. Recovery latency is not measured yet. Business agent actions remain Phase 3; a public run-submission endpoint is not part of this slice.
+- The full Compose startup was attempted but could not pull `quay.io/minio/minio:latest` (registry returned HTTP 401); services beyond the already-running PostgreSQL container remain unverified. OpenAPI/AsyncAPI YAML parses, but Spectral, AsyncAPI CLI, and Mermaid rendering were not run locally because Node.js/npm/mmdc are unavailable.
 

@@ -12,7 +12,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 
 from clos.agents.budgets import BudgetLimits
-from clos.agents.llm import LLMPort, LLMRequest
+from clos.application.llm import LLMPort, LLMRequest
 
 AGENTS = frozenset({"inventory", "pricing", "logistics", "support"})
 
