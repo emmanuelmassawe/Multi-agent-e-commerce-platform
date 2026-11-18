@@ -3,16 +3,38 @@ on: [push, pull_request]
 jobs:
   quality:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: clos
+          POSTGRES_USER: clos
+          POSTGRES_PASSWORD: local-only-change-me
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U clos -d clos"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_ADMIN_URL: postgresql+asyncpg://clos:local-only-change-me@localhost:5432/clos
+      DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
+      TEST_DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
+      CLOS_APP_PASSWORD: local-only-change-me
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: uv sync --all-groups
+      - run: uv run python scripts/prepare_test_database.py
+      - run: uv run alembic upgrade head
+      - run: uv run alembic downgrade base
+      - run: uv run alembic upgrade head
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy .
-      - run: uv run pytest --cov=clos --cov-report=term-missing --cov-fail-under=85
+      - run: uv run pytest --cov=clos.domain --cov=clos.application --cov-report=term-missing --cov-fail-under=85
       - run: npx --yes @stoplight/spectral-cli lint --ruleset .spectral.yaml docs/api/openapi.yaml
       - run: npm install --global @mermaid-js/mermaid-cli
       - run: python scripts/validate_mermaid.py

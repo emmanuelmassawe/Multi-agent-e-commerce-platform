@@ -1,6 +1,7 @@
 """Authentication and integration API key routes."""
 
 from datetime import datetime
+from collections.abc import AsyncIterator
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status

@@ -21,7 +21,9 @@ for table in Base.metadata.sorted_tables:
         for index in sorted(table.indexes, key=lambda item: item.name or "")
     )
 
-source = '''"""Frozen PostgreSQL schema for the Phase 1 core model."""
+table_names = tuple(table.name for table in Base.metadata.sorted_tables)
+sql_lines = "\n".join(f"    {statement!r}," for statement in statements)
+source = f'''"""Frozen PostgreSQL schema for the Phase 1 core model."""
 
 from alembic import op
 
@@ -30,33 +32,34 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
-TENANT_TABLES = ''' + repr(TENANT_TABLE_NAMES) + '''
-UPGRADE_SQL = ''' + repr(tuple(statements)) + '''
+TENANT_TABLES = {TENANT_TABLE_NAMES!r}
+DOWNGRADE_TABLES = {tuple(reversed(table_names))!r}
+UPGRADE_SQL = (
+{sql_lines}
+)
 
 
 def upgrade() -> None:
-    connection = op.get_bind()
     for statement in UPGRADE_SQL:
-        connection.exec_driver_sql(statement)
+        op.execute(statement)
     for table in TENANT_TABLES:
-        connection.exec_driver_sql(f'ALTER TABLE "{table}" ENABLE ROW LEVEL SECURITY')
-        connection.exec_driver_sql(f'ALTER TABLE "{table}" FORCE ROW LEVEL SECURITY')
-        connection.exec_driver_sql(
-            f"CREATE POLICY tenant_isolation ON \\\"{table}\\\" "
+        op.execute(f'ALTER TABLE "{{table}}" ENABLE ROW LEVEL SECURITY')
+        op.execute(f'ALTER TABLE "{{table}}" FORCE ROW LEVEL SECURITY')
+        op.execute(
+            f"CREATE POLICY tenant_isolation ON \\\"{{table}}\\\" "
             "USING (tenant_id = NULLIF(current_setting('app.current_tenant_id', true), '')::uuid) "
             "WITH CHECK (tenant_id = NULLIF(current_setting('app.current_tenant_id', true), '')::uuid)"
         )
-    connection.exec_driver_sql(
+    op.execute(
         "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO clos_app"
     )
 
 
 def downgrade() -> None:
-    connection = op.get_bind()
     for table in TENANT_TABLES:
-        connection.exec_driver_sql(f'DROP POLICY IF EXISTS tenant_isolation ON "{table}"')
-    for table in reversed(("''' + '", "'.join(reversed(tuple(table.name for table in Base.metadata.sorted_tables))) + '''")):
-        connection.exec_driver_sql(f'DROP TABLE "{table}"')
+        op.execute(f'DROP POLICY IF EXISTS tenant_isolation ON "{{table}}"')
+    for table in DOWNGRADE_TABLES:
+        op.execute(f'DROP TABLE "{{table}}"')
 '''
 target.write_text(source, encoding="utf-8")
 print(f"Wrote frozen schema revision {target} with {len(statements)} DDL statements")

@@ -1,6 +1,6 @@
 # 0004. Hexagonal architecture boundaries
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-18
 
 ## Context
@@ -27,4 +27,8 @@ Use domain <- application <- adapters dependency direction, pending review.
 ## Consequences
 
 Future code must keep framework imports outside the pure domain layer.
+
+## Review
+
+Reviewed against the mandatory architecture rules for Phase 1. The domain remains framework-independent and application use cases depend on ports. No dissent was present in the supplied project documentation.
 

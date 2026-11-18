@@ -1,11 +1,12 @@
 """FastAPI application and process health endpoints."""
 
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from clos.adapters.db.session import make_session_factory
 from clos.apps.api.auth_routes import router as auth_router
@@ -18,7 +19,7 @@ configure_logging(settings.log_level)
 
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-    factory: async_sessionmaker | None = None
+    factory: async_sessionmaker[AsyncSession] | None = None
     if settings.database_url is not None:
         factory = make_session_factory(settings.database_url)
         application.state.session_factory = factory
@@ -44,6 +45,7 @@ async def authentication_error_handler(_: Request, exc: AuthenticationError) -> 
             "status": 401,
             "detail": str(exc),
             "code": "AUTHENTICATION_FAILED",
+            "trace_id": str(uuid4()),
         },
     )
 
@@ -59,6 +61,7 @@ async def authorization_error_handler(_: Request, exc: AuthorizationError) -> JS
             "status": 403,
             "detail": str(exc),
             "code": "FORBIDDEN",
+            "trace_id": str(uuid4()),
         },
     )
 

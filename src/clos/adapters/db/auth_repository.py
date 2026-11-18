@@ -124,8 +124,10 @@ class SqlAlchemyAuthRepository:
             select(ApiKey).where(ApiKey.tenant_id == tenant_id, ApiKey.id == key_id)
         )
         key = result.scalar_one_or_none()
-        if key is None or key.revoked_at is not None:
+        if key is None:
             return False
+        if key.revoked_at is not None:
+            return True
         key.revoked_at = datetime.now(UTC)
         self._session.add(
             AuditLog(

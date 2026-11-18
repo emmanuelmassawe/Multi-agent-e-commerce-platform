@@ -10,6 +10,7 @@ paths:
     post:
       operationId: createAccessTokens
       summary: Authenticate a user and issue access and refresh tokens
+      description: tenant_slug is a login selector only; the authenticated tenant scope is taken from the issued token.
       requestBody:
         required: true
         content:
@@ -98,6 +99,7 @@ paths:
           in: path
           required: true
           schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/IdempotencyKey'
       responses:
         '204': { description: Key revoked }
         '401': { $ref: '#/components/responses/Unauthorized' }
