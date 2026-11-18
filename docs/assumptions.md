@@ -24,5 +24,5 @@ Target countries and languages, first commerce/carrier integrations, model provi
 - Read all files under `docs/my-docs/` on 2026-11-18. Only the README, empty directories, and unfilled requirement/business-rule templates are present; no provider, merchant policy, or budget values were specified.
 - The LLM provider adapter remains provider-neutral until a vendor and credentials are supplied. Tests use deterministic synthetic responses only; synthetic token/cost records are never represented as real provider measurements.
 - PostgreSQL checkpoint thread IDs are derived as `<tenant_uuid>:<run_uuid>` to scope reads and writes. The checkpointer's internal tables are not tenant-row-RLS tables; app code must only construct checkpoint configs through `checkpoint_config`.
-- Supervisor routing and checkpoint resume are implemented. Business agent subgraphs and production provider integration remain later implementation slices; process-level worker-kill recovery is not measured yet.
+- Supervisor routing and checkpoint resume are implemented and the PostgreSQL recovery test terminates and replaces a worker subprocess. Recovery latency is not measured yet. Business agent actions and production provider integration remain later implementation slices; a public run-submission endpoint is not part of this slice.
 

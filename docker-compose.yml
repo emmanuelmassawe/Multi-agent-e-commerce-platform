@@ -2,6 +2,7 @@ services:
   api:
     build: .
     environment:
+      APP_ENV: local
       DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@postgres:5432/clos
       AUTH_JWT_SECRET: local-only-development-secret-change-me-000000000000
     ports: ["8000:8000"]
@@ -16,9 +17,13 @@ services:
   worker:
     build: .
     environment:
+      APP_ENV: local
       DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@postgres:5432/clos
+      RABBITMQ_URL: amqp://clos:clos@rabbitmq:5672//
     command: ["python", "-m", "clos.apps.worker.main"]
-    depends_on: [rabbitmq]
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
   postgres:
     image: postgres:16-alpine
     environment:

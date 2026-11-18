@@ -1,6 +1,6 @@
 # 0006. Celery and RabbitMQ for background work
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-18
 
 ## Context
@@ -18,13 +18,17 @@ Durable delivery, retry semantics, operational burden, scheduling, and fit with 
 
 ## Evidence
 
-The prescribed default is Celery and RabbitMQ. Throughput and recovery comparisons are not measured yet.
+The prescribed default is Celery and RabbitMQ. The worker starts a late-ack Celery consumer and
+retries tasks after failures. Worker configuration is unit-tested. Broker throughput and end-to-end
+queue recovery measurements are not measured yet.
 
 ## Decision
 
-Record Celery and RabbitMQ as proposed pending an implementation spike.
+Use Celery with RabbitMQ for worker delivery and retries.
 
 ## Consequences
 
-Compose includes RabbitMQ. Production adoption requires retry, DLQ, idempotency, and recovery validation.
+Compose includes RabbitMQ. The worker retries with exponential backoff and jitter and resumes graph
+state from PostgreSQL. A dead-letter policy and broker throughput benchmark remain to be configured
+and measured before production use.
 

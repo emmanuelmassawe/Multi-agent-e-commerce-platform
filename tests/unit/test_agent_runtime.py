@@ -1,14 +1,15 @@
 """Unit coverage for budgets, LLM fallback, and policy-gated typed tools."""
 
 import asyncio
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from pydantic import BaseModel
 
 from clos.agents.budgets import BudgetEnforcer, BudgetExceeded, BudgetLimits
-from clos.agents.llm import FakeLLM, FallbackLLM, LLMRequest
+from clos.agents.llm import FakeLLM, FallbackLLM, LLMRequest, LLMResponse
 from clos.agents.tools import (
+    ApprovalVerifierPort,
     InMemoryIdempotencyStore,
     ToolContext,
     ToolInputError,
@@ -30,12 +31,13 @@ def test_budget_enforcer_hard_stops_at_each_limit() -> None:
     budget.record_tool_call()
     with pytest.raises(BudgetExceeded, match="tool-call"):
         budget.record_tool_call()
+    wall_budget = BudgetEnforcer(BudgetLimits(max_wall_seconds=1))
     with pytest.raises(BudgetExceeded, match="wall-clock"):
-        budget.check_time(1.0)
+        wall_budget.check_time(1.0)
 
 
 def test_fallback_llm_uses_fake_after_provider_failure() -> None:
-    async def fail(_request: LLMRequest):
+    async def fail(_request: LLMRequest) -> LLMResponse:
         raise RuntimeError("provider unavailable")
 
     async def scenario() -> None:
@@ -92,9 +94,7 @@ def test_typed_tool_validates_gates_risk_and_reuses_idempotent_result() -> None:
         with pytest.raises(ToolPolicyError, match="kill switch"):
             await registry.execute("update", {"value": 1}, permitted)
 
-        registry.register(
-            ToolSpec("dangerous", Input, RiskLevel.WRITE_HIGH, write_handler)
-        )
+        registry.register(ToolSpec("dangerous", Input, RiskLevel.WRITE_HIGH, write_handler))
         with pytest.raises(ToolPolicyError, match="approved request"):
             await registry.execute("dangerous", {"value": 1}, context)
         approved = ToolContext(
@@ -104,7 +104,26 @@ def test_typed_tool_validates_gates_risk_and_reuses_idempotent_result() -> None:
             approved=True,
             approval_id=uuid4(),
         )
-        assert await registry.execute("dangerous", {"value": 1}, approved) == {"written": True}
+        with pytest.raises(ToolPolicyError):
+            await registry.execute("dangerous", {"value": 1}, approved)
+
+        class ApprovedRequest(ApprovalVerifierPort):
+            async def is_approved(
+                self, _tenant_id: UUID, _run_id: UUID, _approval_id: UUID, _tool_name: str
+            ) -> bool:
+                return True
+
+        approved_registry = ToolRegistry(
+            InMemoryIdempotencyStore(),
+            BudgetEnforcer(BudgetLimits()),
+            approval_verifier=ApprovedRequest(),
+        )
+        approved_registry.register(
+            ToolSpec("dangerous", Input, RiskLevel.WRITE_HIGH, write_handler)
+        )
+        assert await approved_registry.execute("dangerous", {"value": 1}, approved) == {
+            "written": True
+        }
 
     asyncio.run(scenario())
 

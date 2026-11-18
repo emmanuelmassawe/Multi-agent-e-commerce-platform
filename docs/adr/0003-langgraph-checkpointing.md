@@ -20,8 +20,8 @@ Durable resume, interrupt support, tenant isolation, operational complexity, and
 
 The project instructions prescribe the first option. A deterministic recovery test interrupts after
 classification, closes its PostgreSQL saver, then resumes through a newly constructed graph and
-saver on PostgreSQL 16. The integration check passed locally on 2026-11-18; latency and process-level
-worker-kill recovery time are not measured yet. Reproduce with
+saver on PostgreSQL 16. The integration check passed locally on 2026-11-18 and terminates the first
+worker subprocess; recovery latency is not measured yet. Reproduce with
 `CHECKPOINT_DATABASE_URL=postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos` and
 `uv run pytest tests/integration/test_checkpoint_resume.py -q`.
 

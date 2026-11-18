@@ -1,5 +1,6 @@
 """Resumable LangGraph supervisor with tenant/run-scoped checkpoints."""
 
+import asyncio
 import operator
 import time
 from pathlib import Path
@@ -88,48 +89,65 @@ def build_supervisor_graph(
     builder = StateGraph(SupervisorState)
 
     async def classify(state: SupervisorState) -> dict[str, object]:
-        started_at = state.get("started_at", time.monotonic())
-        if time.monotonic() - started_at >= budget.max_wall_seconds:
+        started_at = state.get("started_at", time.time())
+        elapsed = time.time() - started_at
+        if elapsed >= budget.max_wall_seconds:
             return {
                 "status": "budget_exceeded",
                 "response": "Run stopped: wall-clock budget exceeded.",
                 "started_at": started_at,
                 "steps": 1,
             }
-        response = await llm.complete(
-            LLMRequest(
-                task="classify",
-                prompt=f"{load_prompt('classify_v1.md')}\n\nUser request:\n{state['message']}",
-                tenant_id=state["tenant_id"],
-                run_id=state["run_id"],
-                max_output_tokens=budget.max_tokens,
+        prompt = f"{load_prompt('classify_v1.md')}\n\nUser request:\n{state['message']}"
+        input_estimate = max(1, len(prompt.split()))
+        output_limit = budget.max_tokens - input_estimate
+        if output_limit < 1:
+            return _budget_stop("token", started_at)
+        try:
+            response = await asyncio.wait_for(
+                llm.complete(
+                    LLMRequest(
+                        task="classify",
+                        prompt=prompt,
+                        tenant_id=state["tenant_id"],
+                        run_id=state["run_id"],
+                        max_output_tokens=output_limit,
+                    )
+                ),
+                timeout=max(0.001, budget.max_wall_seconds - elapsed),
             )
-        )
+        except TimeoutError:
+            return _budget_stop("wall-clock", started_at)
         routes = [route.strip() for route in response.text.split(",") if route.strip()]
         selected = list(dict.fromkeys(route for route in routes if route in AGENTS))
         if not selected:
             selected = ["support"]
         used_steps = state.get("steps", 0) + 1
         used_tokens = state.get("tokens", 0) + response.input_tokens + response.output_tokens
+        usage_record = _usage_record(
+            state, response.model, response.input_tokens, response.output_tokens, response.cost_usd
+        )
         if used_tokens > budget.max_tokens:
-            return _budget_stop("token", started_at)
+            stopped = _budget_stop("token", started_at)
+            stopped.update(
+                tokens=response.input_tokens + response.output_tokens,
+                usage_records=[usage_record],
+            )
+            return stopped
         if used_steps + len(selected) + 1 > budget.max_steps:
-            return _budget_stop("step", started_at)
+            stopped = _budget_stop("step", started_at)
+            stopped.update(
+                tokens=response.input_tokens + response.output_tokens,
+                usage_records=[usage_record],
+            )
+            return stopped
         return {
             "intent": state["message"],
             "agents": selected,
             "started_at": started_at,
             "steps": 1,
             "tokens": response.input_tokens + response.output_tokens,
-            "usage_records": [
-                _usage_record(
-                    state,
-                    response.model,
-                    response.input_tokens,
-                    response.output_tokens,
-                    response.cost_usd,
-                )
-            ],
+            "usage_records": [usage_record],
             "status": "running",
         }
 
@@ -164,7 +182,7 @@ def build_supervisor_graph(
 
     async def aggregate(state: SupervisorState) -> dict[str, object]:
         started_at = state.get("started_at", time.monotonic())
-        elapsed = time.monotonic() - started_at
+        elapsed = time.time() - started_at
         remaining = budget.max_tokens - state.get("tokens", 0)
         if elapsed >= budget.max_wall_seconds:
             return _budget_stop("wall-clock", started_at)
@@ -177,18 +195,37 @@ def build_supervisor_graph(
         output_limit = remaining - input_estimate
         if output_limit < 1:
             return _budget_stop("token", started_at)
-        response = await llm.complete(
-            LLMRequest(
-                task="respond",
-                prompt=prompt,
-                tenant_id=state["tenant_id"],
-                run_id=state["run_id"],
-                max_output_tokens=output_limit,
+        try:
+            response = await asyncio.wait_for(
+                llm.complete(
+                    LLMRequest(
+                        task="respond",
+                        prompt=prompt,
+                        tenant_id=state["tenant_id"],
+                        run_id=state["run_id"],
+                        max_output_tokens=output_limit,
+                    )
+                ),
+                timeout=max(0.001, budget.max_wall_seconds - elapsed),
             )
-        )
+        except TimeoutError:
+            return _budget_stop("wall-clock", started_at)
         actual_tokens = response.input_tokens + response.output_tokens
         if actual_tokens > remaining:
-            return _budget_stop("token", started_at)
+            stopped = _budget_stop("token", started_at)
+            stopped.update(
+                tokens=actual_tokens,
+                usage_records=[
+                    _usage_record(
+                        state,
+                        response.model,
+                        response.input_tokens,
+                        response.output_tokens,
+                        response.cost_usd,
+                    )
+                ],
+            )
+            return stopped
         if elapsed >= budget.max_wall_seconds:
             return _budget_stop("wall-clock", started_at)
         return {

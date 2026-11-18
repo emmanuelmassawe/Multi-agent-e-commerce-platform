@@ -8,7 +8,7 @@ from clos.logging import configure_logging
 
 def test_settings_defaults() -> None:
     settings = Settings()
-    assert settings.app_env == "local"
+    assert settings.app_env == "production"
     assert settings.log_level == "INFO"
 
 

@@ -280,6 +280,15 @@ class ApprovalRequest(TenantScoped, Base):
 
 class ToolCall(TenantScoped, Base):
     __tablename__ = "tool_calls"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "agent_run_id",
+            "tool_name",
+            "idempotency_key",
+            name="uq_tool_calls_run_tool_idempotency",
+        ),
+    )
 
     agent_run_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("agent_runs.id"), nullable=False)
     tool_name: Mapped[str] = mapped_column(String(120), nullable=False)

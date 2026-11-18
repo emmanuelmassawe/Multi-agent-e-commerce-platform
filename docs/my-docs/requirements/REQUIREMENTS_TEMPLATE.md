@@ -6,6 +6,7 @@
 - What products do they sell? Typical catalog size? Orders per day?
 - Biggest pains today (ranked):
 - remember the llm api key we are using is gemini free tier api key
+- remember to keep a fallback if one llm api key fails
 
 ## 2. Users and roles
 

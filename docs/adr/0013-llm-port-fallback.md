@@ -1,6 +1,6 @@
 # 0013. LLM provider port with fallback
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-18
 
 ## Context
@@ -22,7 +22,9 @@ The supplied rule prescribes a provider abstraction and fallback. Provider quali
 
 ## Decision
 
-Record LLMPort and fallback support as proposed.
+Use a provider-neutral `LLMPort`, provider-call adapter, configurable fallback wrapper, and
+deterministic synthetic fake for tests. A real provider and fallback model remain unselected until
+product requirements and credentials are supplied.
 
 ## Consequences
 

@@ -1,22 +1,32 @@
-"""Placeholder worker process; queue integration arrives in a later phase."""
+"""Celery worker entry point for resumable agent runs."""
 
-import time
-from collections.abc import Callable
-
-import structlog
+from celery import Celery  # type: ignore[import-untyped]
 
 from clos.config import settings
 from clos.logging import configure_logging
 
 configure_logging(settings.log_level)
-logger = structlog.get_logger(__name__)
+
+celery_app = Celery(
+    "clos",
+    broker=settings.rabbitmq_url,
+    include=["clos.apps.worker.tasks"],
+)
+celery_app.conf.update(
+    task_serializer="json",
+    result_serializer="json",
+    accept_content=["json"],
+    task_acks_late=True,
+    task_reject_on_worker_lost=True,
+    worker_prefetch_multiplier=1,
+    broker_connection_retry_on_startup=True,
+    task_default_queue="agent-runs",
+)
 
 
-def main(*, sleep: Callable[[float], None] = time.sleep) -> None:
-    """Keep the worker container alive until task consumers are implemented."""
-    logger.info("worker_started", component="worker")
-    while True:
-        sleep(60)
+def main() -> None:
+    """Start a RabbitMQ-backed Celery worker."""
+    celery_app.worker_main(["worker", "--loglevel=INFO"])
 
 
 if __name__ == "__main__":

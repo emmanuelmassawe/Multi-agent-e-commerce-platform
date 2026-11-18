@@ -26,9 +26,20 @@ class ToolPolicyError(ToolError):
 
 
 class IdempotencyPort(Protocol):
-    async def get(self, key: str) -> object | None: ...
+    async def run_once(
+        self,
+        key: str,
+        action: Callable[[], Awaitable[object]],
+        *,
+        risk_level: RiskLevel,
+        input_data: dict[str, object],
+    ) -> object: ...
 
-    async def put(self, key: str, result: object) -> None: ...
+
+class ApprovalVerifierPort(Protocol):
+    async def is_approved(
+        self, tenant_id: UUID, run_id: UUID, approval_id: UUID, tool_name: str
+    ) -> bool: ...
 
 
 class InMemoryIdempotencyStore:
@@ -36,15 +47,26 @@ class InMemoryIdempotencyStore:
 
     def __init__(self) -> None:
         self._results: dict[str, object] = {}
-        self._lock = asyncio.Lock()
+        self._guard = asyncio.Lock()
+        self._locks: dict[str, asyncio.Lock] = {}
 
-    async def get(self, key: str) -> object | None:
-        async with self._lock:
-            return self._results.get(key)
-
-    async def put(self, key: str, result: object) -> None:
-        async with self._lock:
-            self._results.setdefault(key, result)
+    async def run_once(
+        self,
+        key: str,
+        action: Callable[[], Awaitable[object]],
+        *,
+        risk_level: RiskLevel,
+        input_data: dict[str, object],
+    ) -> object:
+        del risk_level, input_data
+        async with self._guard:
+            lock = self._locks.setdefault(key, asyncio.Lock())
+        async with lock:
+            if key in self._results:
+                return self._results[key]
+            result = await action()
+            self._results[key] = result
+            return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,6 +111,7 @@ class ToolRegistry:
         retry_base_seconds: float = 0.05,
         jitter: Callable[[float, float], float] = random.uniform,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+        approval_verifier: ApprovalVerifierPort | None = None,
     ) -> None:
         self._idempotency = idempotency
         self._budget = budget
@@ -96,6 +119,7 @@ class ToolRegistry:
         self._retry_base_seconds = retry_base_seconds
         self._jitter = jitter
         self._sleep = sleep
+        self._approval_verifier = approval_verifier
 
     def register(self, spec: ToolSpec) -> None:
         if spec.name in self._tools:
@@ -111,6 +135,8 @@ class ToolRegistry:
         raw_input: object,
         context: ToolContext,
     ) -> object:
+        if not context.idempotency_key.strip():
+            raise ValueError("Tool idempotency key must not be empty")
         try:
             spec = self._tools[name]
         except KeyError as exc:
@@ -119,36 +145,47 @@ class ToolRegistry:
             parsed = spec.input_model.model_validate(raw_input)
         except ValidationError as exc:
             raise ToolInputError("Tool input failed schema validation") from exc
-        self._enforce_policy(spec, context)
+        await self._enforce_policy(spec, context)
         scoped_key = f"{context.tenant_id}:{context.run_id}:{name}:{context.idempotency_key}"
-        cached = await self._idempotency.get(scoped_key)
-        if cached is not None:
-            return cached
 
-        self._budget.record_tool_call()
-        for attempt in range(spec.max_retries + 1):
-            try:
-                result = await asyncio.wait_for(
-                    spec.handler(parsed, context), timeout=spec.timeout_seconds
-                )
-                await self._idempotency.put(scoped_key, result)
-                return result
-            except Exception:
-                if attempt == spec.max_retries:
-                    raise
-                ceiling = self._retry_base_seconds * (2**attempt)
-                await self._sleep(max(0.0, self._jitter(0.0, ceiling)))
-        raise AssertionError("Retry loop exited unexpectedly")
+        async def run_with_retries() -> object:
+            self._budget.record_tool_call()
+            for attempt in range(spec.max_retries + 1):
+                try:
+                    return await asyncio.wait_for(
+                        spec.handler(parsed, context), timeout=spec.timeout_seconds
+                    )
+                except Exception:
+                    if attempt == spec.max_retries:
+                        raise
+                    ceiling = self._retry_base_seconds * (2**attempt)
+                    await self._sleep(max(0.0, self._jitter(0.0, ceiling)))
+            raise AssertionError("Retry loop exited unexpectedly")
 
-    @staticmethod
-    def _enforce_policy(spec: ToolSpec, context: ToolContext) -> None:
+        return await self._idempotency.run_once(
+            scoped_key,
+            run_with_retries,
+            risk_level=spec.risk_level,
+            input_data=parsed.model_dump(mode="json"),
+        )
+
+    async def _enforce_policy(self, spec: ToolSpec, context: ToolContext) -> None:
         if spec.risk_level == RiskLevel.READ:
             return
         if context.kill_switch_active:
             raise ToolPolicyError("Writes are blocked while the kill switch is active")
         if spec.risk_level == RiskLevel.WRITE_HIGH:
-            if not context.approved or context.approval_id is None:
+            if (
+                not context.approved
+                or context.approval_id is None
+                or self._approval_verifier is None
+            ):
                 raise ToolPolicyError("High-risk tools require an approved request")
+            is_approved = await self._approval_verifier.is_approved(
+                context.tenant_id, context.run_id, context.approval_id, spec.name
+            )
+            if not is_approved:
+                raise ToolPolicyError("Approval request does not authorize this tool")
             return
         if not may_execute_write(context.autonomy_mode, spec.risk_level, context.in_rule):
             raise ToolPolicyError("Autonomy policy does not permit this write")

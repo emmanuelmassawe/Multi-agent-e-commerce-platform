@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from clos.adapters.db.models import AgentRun, TokenUsage
@@ -32,6 +32,25 @@ class SQLAgentRunRepository:
                 )
             )
 
+    async def start(self, tenant_id: UUID, run_id: UUID) -> None:
+        async with tenant_session(self._sessions, tenant_id) as session:
+            result = await session.execute(
+                select(AgentRun).where(AgentRun.id == run_id, AgentRun.tenant_id == tenant_id)
+            )
+            run = result.scalar_one_or_none()
+            if run is None:
+                session.add(
+                    AgentRun(
+                        id=run_id,
+                        tenant_id=tenant_id,
+                        agent_name="supervisor",
+                        status="running",
+                        autonomy_mode="shadow",
+                    )
+                )
+            else:
+                run.status = "running"
+
     async def finish(
         self,
         tenant_id: UUID,
@@ -50,6 +69,12 @@ class SQLAgentRunRepository:
                 raise AgentRunNotFound("Agent run not found in tenant scope")
             run.status = status
             run.explanation = explanation
+            await session.execute(
+                delete(TokenUsage).where(
+                    TokenUsage.tenant_id == tenant_id,
+                    TokenUsage.agent_run_id == run_id,
+                )
+            )
             for record in usage_records:
                 if record["tenant_id"] != str(tenant_id) or record["run_id"] != str(run_id):
                     raise ValueError("Token usage record does not match the run tenant and ID")

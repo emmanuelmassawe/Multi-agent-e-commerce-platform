@@ -7,6 +7,7 @@ import os
 import sys
 
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from psycopg import AsyncConnection
 from sqlalchemy.engine import make_url
 
 
@@ -20,7 +21,8 @@ async def main() -> None:
         raise RuntimeError("DATABASE_ADMIN_URL is required for checkpoint schema setup")
     async with AsyncPostgresSaver.from_conn_string(psycopg_url(admin_url)) as saver:
         await saver.setup()
-        await saver.conn.execute(
+    async with await AsyncConnection.connect(psycopg_url(admin_url)) as connection:
+        await connection.execute(
             "GRANT SELECT, INSERT, UPDATE, DELETE ON "
             "checkpoint_migrations, checkpoints, checkpoint_blobs, checkpoint_writes "
             "TO clos_app"

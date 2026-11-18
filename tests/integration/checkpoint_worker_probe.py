@@ -3,9 +3,8 @@
 import asyncio
 import json
 import os
-import sys
 import selectors
-import asyncio
+import sys
 from pathlib import Path
 from uuid import UUID
 
@@ -51,11 +50,12 @@ async def main(mode: str, tenant_id: UUID, run_id: UUID, marker: Path) -> None:
 
 
 if __name__ == "__main__":
-    loop_factory = (
-        lambda: asyncio.SelectorEventLoop(selectors.SelectSelector())
-        if sys.platform == "win32"
-        else asyncio.new_event_loop()
-    )
+
+    def loop_factory() -> asyncio.AbstractEventLoop:
+        if sys.platform == "win32":
+            return asyncio.SelectorEventLoop(selectors.SelectSelector())
+        return asyncio.new_event_loop()
+
     asyncio.run(
         main(sys.argv[1], UUID(sys.argv[2]), UUID(sys.argv[3]), Path(sys.argv[4])),
         loop_factory=loop_factory,
