@@ -15,6 +15,10 @@ from clos.application.ports import (
 )
 from clos.domain.identity import Role, role_allows
 
+VALID_API_KEY_PERMISSIONS = frozenset(
+    {"read", "manage_catalog", "manage_orders", "manage_approvals", "manage_api_keys"}
+)
+
 
 class AuthenticationError(Exception):
     """Raised when credentials or a token are invalid."""
@@ -137,7 +141,11 @@ class AuthService:
     ) -> tuple[UUID, str]:
         if not principal.allows("manage_api_keys"):
             raise AuthorizationError("Permission denied")
-        if not permissions or any(not principal.allows(permission) for permission in permissions):
+        if not permissions or any(
+            permission not in VALID_API_KEY_PERMISSIONS
+            or not principal.allows(permission)
+            for permission in permissions
+        ):
             raise AuthorizationError("Requested API key permissions exceed caller permissions")
         if not idempotency_key or len(idempotency_key) > 200:
             raise ValueError("Idempotency-Key must contain between 1 and 200 characters")

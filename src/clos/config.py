@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     app_env: str = "local"
     log_level: str = "INFO"
     database_url: str | None = None
+    database_admin_url: str | None = None
     auth_jwt_secret: SecretStr | None = None
     access_token_seconds: int = 900
     refresh_token_days: int = 30

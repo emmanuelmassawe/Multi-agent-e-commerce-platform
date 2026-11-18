@@ -1,12 +1,66 @@
 """FastAPI application and process health endpoints."""
 
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import async_sessionmaker
+
+from clos.adapters.db.session import make_session_factory
+from clos.apps.api.auth_routes import router as auth_router
+from clos.application.auth import AuthenticationError, AuthorizationError
 from clos.config import settings
 from clos.logging import configure_logging
 
 configure_logging(settings.log_level)
-app = FastAPI(title="CLOS API", version="0.1.0")
+
+
+@asynccontextmanager
+async def lifespan(application: FastAPI) -> AsyncIterator[None]:
+    factory: async_sessionmaker | None = None
+    if settings.database_url is not None:
+        factory = make_session_factory(settings.database_url)
+        application.state.session_factory = factory
+    try:
+        yield
+    finally:
+        if factory is not None:
+            await factory.kw["bind"].dispose()
+
+
+app = FastAPI(title="CLOS API", version="0.1.0", lifespan=lifespan)
+app.include_router(auth_router)
+
+
+@app.exception_handler(AuthenticationError)
+async def authentication_error_handler(_: Request, exc: AuthenticationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=401,
+        media_type="application/problem+json",
+        content={
+            "type": "about:blank",
+            "title": "Authentication failed",
+            "status": 401,
+            "detail": str(exc),
+            "code": "AUTHENTICATION_FAILED",
+        },
+    )
+
+
+@app.exception_handler(AuthorizationError)
+async def authorization_error_handler(_: Request, exc: AuthorizationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=403,
+        media_type="application/problem+json",
+        content={
+            "type": "about:blank",
+            "title": "Forbidden",
+            "status": 403,
+            "detail": str(exc),
+            "code": "FORBIDDEN",
+        },
+    )
 
 
 @app.get("/health/live", tags=["health"])
