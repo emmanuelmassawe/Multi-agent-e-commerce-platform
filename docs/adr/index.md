@@ -16,4 +16,5 @@
 | [0012](0012-sandbox.md) | Sandboxed execution | proposed |
 | [0013](0013-llm-port-fallback.md) | LLM port, Gemini adapter, and key fallback | accepted |
 | [0015](0015-agent-runtime-budget-and-tools.md) | Agent runtime budgets and typed tools | accepted |
+| [0016](0016-phase3-agent-boundaries.md) | Phase 3 agent boundaries and tenant-scoped ports | accepted |
 

@@ -12,6 +12,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 
 from clos.agents.budgets import BudgetLimits
+from clos.agents.common import AgentContext, AgentRunner
 from clos.application.llm import LLMPort, LLMRequest
 
 AGENTS = frozenset({"inventory", "pricing", "logistics", "support"})
@@ -35,6 +36,7 @@ class SupervisorState(TypedDict):
     tenant_id: str
     run_id: str
     message: str
+    customer_id: NotRequired[str]
     intent: NotRequired[str]
     agents: NotRequired[list[str]]
     agent_results: Annotated[list[AgentResult], operator.add]
@@ -51,6 +53,7 @@ class DispatchState(TypedDict):
     tenant_id: str
     run_id: str
     message: str
+    customer_id: NotRequired[str]
     intent: str
     agents: list[str]
     agent: str
@@ -83,6 +86,7 @@ def build_supervisor_graph(
     limits: BudgetLimits | None = None,
     checkpointer: BaseCheckpointSaver[Any] | None = None,
     interrupt_after: list[str] | None = None,
+    agent_runners: dict[str, AgentRunner] | None = None,
 ) -> Any:
     """Create a supervisor graph; independently routed agents fan out in parallel."""
     budget = limits or BudgetLimits()
@@ -161,6 +165,7 @@ def build_supervisor_graph(
                     "tenant_id": state["tenant_id"],
                     "run_id": state["run_id"],
                     "message": state["message"],
+                    **({"customer_id": state["customer_id"]} if state.get("customer_id") else {}),
                     "intent": state["intent"],
                     "agents": state["agents"],
                     "agent": agent,
@@ -173,10 +178,22 @@ def build_supervisor_graph(
             for agent in state["agents"]
         ]
 
-    def dispatch(state: DispatchState) -> dict[str, object]:
+    async def dispatch(state: DispatchState) -> dict[str, object]:
         agent = state["agent"]
+        runner = (agent_runners or {}).get(agent)
+        if runner is not None:
+            summary = await runner.run(
+                state["message"],
+                AgentContext(
+                    tenant_id=UUID(state["tenant_id"]),
+                    run_id=UUID(state["run_id"]),
+                    customer_id=UUID(state["customer_id"]) if state.get("customer_id") else None,
+                ),
+            )
+        else:
+            summary = f"Request routed to {agent} agent; no integration runner was configured."
         return {
-            "agent_results": [{"agent": agent, "summary": f"Request routed to {agent} agent."}],
+            "agent_results": [{"agent": agent, "summary": summary}],
             "steps": 1,
         }
 

@@ -44,12 +44,30 @@ sequenceDiagram
   participant S as Support agent
   participant R as Rules / approval
   participant C as Customer channel
-  L->>L: detect delay from carrier event
-  L->>S: provide tenant-scoped shipment facts
-  S->>S: draft notice from approved policy
-  S->>R: classify message action risk
-  R-->>S: approval required when bulk/high risk
-  S->>C: send only after authorization
+  L->>L: track shipment and compare supplied timestamps
+  L->>S: provide tenant/customer-scoped shipment facts
+  S->>S: retrieve scoped evidence and draft notice
+  S-->>M: return unsent draft for review
+  Note over L,S: Missing delay or notification policy remains unknown; Phase 3 sends no message
+```
+
+## Stockout risk to pricing consideration
+
+```mermaid
+sequenceDiagram
+  participant I as Inventory agent
+  participant R as Merchant price rule
+  participant P as Pricing agent
+  participant H as Human approval
+  I->>I: forecast coverage from tenant stock and demand
+  I->>P: provide scoped stockout risk signal
+  P->>R: read explicit stockout markup, floor, ceiling, threshold
+  alt markup rule exists
+    P->>P: calculate recommendation and approval requirement
+  else no markup rule
+    P->>P: record risk consideration without inferring a price change
+  end
+  P-->>H: return proposal; no price write in Phase 3
 ```
 
 ## RAG ingestion and retrieval

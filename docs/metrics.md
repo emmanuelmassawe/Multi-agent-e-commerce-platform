@@ -19,6 +19,20 @@ values are synthetic and are not production measurements.
 Tenant labels must use tenant IDs and must not contain names, emails, prompts, or other PII. Grafana
 dashboards and alert thresholds are not measured/configured yet.
 
+## Phase 3 agent metrics
+
+| Metric | Labels | Source | Status |
+|---|---|---|---|
+| `inventory_stockout_forecast_total` | tenant, outcome | Inventory agent | instrumentation pending |
+| `inventory_reorder_proposal_total` | tenant, approval_required | Inventory agent | instrumentation pending |
+| `pricing_recommendation_total` | tenant, approval_required | Pricing agent | instrumentation pending |
+| `logistics_delay_assessment_total` | tenant, outcome | Logistics agent | instrumentation pending |
+| `support_answer_draft_total` | tenant, evidence_found | Support agent | instrumentation pending |
+| `support_escalation_draft_total` | tenant | Support agent | instrumentation pending |
+
+These proposed business metrics have no live exporter or dashboard yet. The Phase 3 fake benchmark
+measures only serial in-process operation latency and is not a business outcome or production SLO.
+
 ## Benchmark status
 
 The synthetic supervisor graph benchmark has been run: 500 serial runs across five route cases,

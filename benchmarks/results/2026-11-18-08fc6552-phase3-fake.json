@@ -1,0 +1,51 @@
+{
+  "date_utc": "2026-11-18T18:13:39.888729+00:00",
+  "git_sha": "08fc6552d275a6533e1c3379557c16ac14ce9b09",
+  "working_tree_dirty": true,
+  "source_tree_sha256": "2450aa4a1ee9fd33715345a539a7753b8632813e64bc24ebf66555dd6e0ebc40",
+  "environment": {
+    "os": "Windows-11-10.0.22000-SP0",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 142 Stepping 9, GenuineIntel",
+    "python": "3.12.15",
+    "llm": "none; deterministic fakes only"
+  },
+  "dataset_size": 1,
+  "runs_per_agent": 100,
+  "command": "uv run python benchmarks/run_fake_agents.py",
+  "summary": {
+    "inventory": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 0.002900022082030773,
+      "latency_ms_p95": 0.00890000956133008,
+      "latency_ms_p99": 0.01680001150816679,
+      "mean_latency_ms": 0.0041479989886283875
+    },
+    "pricing": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 0.005199981387704611,
+      "latency_ms_p95": 0.020000035874545574,
+      "latency_ms_p99": 0.04329998046159744,
+      "mean_latency_ms": 0.008086000452749431
+    },
+    "logistics": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 0.002800021320581436,
+      "latency_ms_p95": 0.010399962775409222,
+      "latency_ms_p99": 0.012499978765845299,
+      "mean_latency_ms": 0.004022000357508659
+    },
+    "support": {
+      "runs": 100,
+      "success_rate": 1.0,
+      "latency_ms_p50": 0.004200031980872154,
+      "latency_ms_p95": 0.014399993233382702,
+      "latency_ms_p99": 0.03250001464039087,
+      "mean_latency_ms": 0.008040000684559345
+    }
+  },
+  "scope": "serial in-process operations; excludes network, database, queue, and LLM latency"
+}

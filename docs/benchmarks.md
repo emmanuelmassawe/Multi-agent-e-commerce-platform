@@ -20,3 +20,18 @@ This benchmark used a dirty working tree; the result records the base git SHA an
 SHA-256 so the measured code snapshot remains identifiable. It is a serial, in-process run without
 PostgreSQL checkpoint I/O or RabbitMQ delivery. Real Gemini latency and cost, concurrency, and
 queue throughput are **not measured yet**.
+
+## Phase 3 synthetic agent operations
+
+This benchmark runs 100 serial iterations for each fake-backed agent operation on a one-item
+synthetic dataset. It measures in-process logic and fake adapter overhead only; it excludes database,
+queue, network integration, and LLM latency. Results are in
+[the raw Phase 3 result](../benchmarks/results/2026-11-18-08fc6552-phase3-fake.json), including the
+source-tree hash and environment. Reproduce with:
+
+```powershell
+uv run python benchmarks/run_fake_agents.py
+```
+
+These synthetic microsecond-scale timings are not production performance targets. Real integrations,
+concurrency, and business outcome rates are **not measured yet**.

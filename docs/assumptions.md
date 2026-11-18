@@ -27,3 +27,15 @@ Target countries and languages, first commerce/carrier integrations, model provi
 - Supervisor routing and checkpoint resume are implemented and the PostgreSQL recovery test terminates and replaces a worker subprocess. Recovery latency is not measured yet. Business agent actions remain Phase 3; a public run-submission endpoint is not part of this slice.
 - The full Compose startup was attempted but could not pull `quay.io/minio/minio:latest` (registry returned HTTP 401); services beyond the already-running PostgreSQL container remain unverified. OpenAPI/AsyncAPI YAML parses, but Spectral, AsyncAPI CLI, and Mermaid rendering were not run locally because Node.js/npm/mmdc are unavailable.
 
+## Phase 3
+
+- Read all files under `docs/my-docs/` at phase start on 2026-11-18. Gemini free tier and fallback API keys are specified, but the business-rules template remains unfilled. There are no thresholds, margin rules, carrier allowlists, delay windows, reorder policies, support languages/tone, or escalation contacts to encode.
+- Agent calculations accept tenant rules and operational facts as inputs. Missing thresholds are not inferred: stockout coverage is descriptive, delay detection reports unknown without required timestamps, and price recommendations remain approval-required unless an explicit threshold makes the delta in-rule.
+- External commerce, competitor-price, carrier, and support retrieval systems have no selected providers. Phase 3 defines tenant-scoped ports and deterministic fakes. No customer notification is sent; support answers are drafts.
+- Write actions remain blocked unless existing tool policy receives a valid persisted approval. The Phase 4 graph interrupt/approval/resume lifecycle is not implemented yet; Phase 3 produces reorder, price, and rebooking proposals without executing them.
+- Customer-scoped support retrieval requires `customer_id` in trusted agent context. Tenant and customer scope are not accepted from the query text. Production adapters must enforce those filters.
+- Route choice orders supplied options by cost, then duration. No carrier preference or service-level policy was provided. Shipment timestamp comparison requires compatible ISO 8601 UTC timestamps; a configurable delay window remains outstanding.
+- Pricing accepts an explicit stockout-risk signal and optional merchant stockout markup. With no configured markup, no price change is inferred from inventory risk; threshold detection remains an input from an inventory policy.
+- Agent prompts are versioned. Evals use deterministic synthetic data; no real customer data or real LLM evaluation was used. Agent latency and business outcomes are not measured yet.
+- Mermaid source was updated, but local rendering validation remains unavailable because the `mmdc` executable is not installed; CI is configured to render these diagrams.
+
