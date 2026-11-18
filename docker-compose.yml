@@ -1,0 +1,63 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  worker:
+    build: .
+    env_file: .env
+    command: ["python", "-m", "clos.apps.worker.main"]
+    depends_on: [rabbitmq]
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_DB: clos, POSTGRES_USER: clos, POSTGRES_PASSWORD: clos }
+    ports: ["5432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clos -d clos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    ports: ["6333:6333", "6334:6334"]
+    volumes: ["qdrant_data:/qdrant/storage"]
+  redis:
+    image: redis:7.4-alpine
+    ports: ["6379:6379"]
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 5s, timeout: 3s, retries: 10 }
+  rabbitmq:
+    image: rabbitmq:4.0-management-alpine
+    environment: { RABBITMQ_DEFAULT_USER: clos, RABBITMQ_DEFAULT_PASS: clos }
+    ports: ["5672:5672", "15672:15672"]
+    healthcheck: { test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"], interval: 10s, timeout: 5s, retries: 10 }
+  langfuse:
+    image: langfuse/langfuse:2
+    environment:
+      DATABASE_URL: postgresql://clos:clos@postgres:5432/langfuse
+      NEXTAUTH_SECRET: local-only-change-me
+      SALT: local-only-change-me
+      NEXTAUTH_URL: http://localhost:3000
+    ports: ["3000:3000"]
+    depends_on: [postgres]
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports: ["9090:9090"]
+    volumes: ["./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+  grafana:
+    image: grafana/grafana:11.3.0
+    ports: ["3001:3000"]
+    volumes: ["grafana_data:/var/lib/grafana"]
+volumes:
+  postgres_data:
+  qdrant_data:
+  grafana_data:
+

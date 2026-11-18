@@ -1,0 +1,51 @@
+openapi: 3.1.0
+info:
+  title: CLOS API
+  version: 0.1.0
+  description: Initial contract scaffold. Expand and review each operation before implementation.
+servers:
+  - url: /v1
+paths:
+  /health/live:
+    get:
+      operationId: getLiveness
+      summary: Check whether the API process is responding
+      responses:
+        '200':
+          description: Process is live
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status: { type: string, const: live }
+  /health/ready:
+    get:
+      operationId: getReadiness
+      summary: Check whether the API can serve requests
+      responses:
+        '200':
+          description: Process is ready (dependency checks are not wired in Phase 0)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status: { type: string, const: ready }
+components:
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 problem details, extended with stable CLOS error and trace identifiers.
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string, format: uri-reference }
+        code: { type: string }
+        trace_id: { type: string }
+      required: [type, title, status, code, trace_id]
+
