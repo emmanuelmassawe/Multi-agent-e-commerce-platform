@@ -38,14 +38,61 @@ services:
     ports: ["5672:5672", "15672:15672"]
     healthcheck: { test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"], interval: 10s, timeout: 5s, retries: 10 }
   langfuse:
-    image: langfuse/langfuse:2
+    image: docker.langfuse.com/langfuse/langfuse:4
     environment:
-      DATABASE_URL: postgresql://clos:clos@postgres:5432/langfuse
+      DATABASE_URL: postgresql://clos:clos@postgres:5432/clos
       NEXTAUTH_SECRET: local-only-change-me
       SALT: local-only-change-me
       NEXTAUTH_URL: http://localhost:3000
+      ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+      CLICKHOUSE_USER: clos
+      CLICKHOUSE_PASSWORD: clos
+      REDIS_CONNECTION_STRING: redis://redis:6379
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: miniosecret
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: miniosecret
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
     ports: ["3000:3000"]
-    depends_on: [postgres]
+    depends_on:
+      postgres: { condition: service_healthy }
+      clickhouse: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.12
+    environment: { CLICKHOUSE_DB: default, CLICKHOUSE_USER: clos, CLICKHOUSE_PASSWORD: clos, CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1 }
+    ports: ["8123:8123"]
+    volumes: ["clickhouse_data:/var/lib/clickhouse"]
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--user", "clos", "--password", "clos", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  minio:
+    image: quay.io/minio/minio:latest
+    command: ["server", "/data"]
+    environment: { MINIO_ROOT_USER: minio, MINIO_ROOT_PASSWORD: miniosecret }
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes: ["minio_data:/data"]
+  minio-init:
+    image: quay.io/minio/mc:latest
+    depends_on:
+      minio: { condition: service_healthy }
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["mc alias set local http://minio:9000 minio miniosecret && mc mb --ignore-existing local/langfuse"]
   prometheus:
     image: prom/prometheus:v2.55.1
     ports: ["9090:9090"]
@@ -58,4 +105,6 @@ volumes:
   postgres_data:
   qdrant_data:
   grafana_data:
+  clickhouse_data:
+  minio_data:
 

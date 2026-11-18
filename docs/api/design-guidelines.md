@@ -1,6 +1,6 @@
 # API design guidelines
 
-The OpenAPI 3.1 document in `openapi.yaml` is the contract source of truth. Keep it current before implementing endpoints.
+The OpenAPI 3.1 document in `openapi.yaml` is the HTTP contract source of truth. The AsyncAPI document in `asyncapi.yaml` defines SSE, WebSocket, and webhook events. Keep both current before implementing endpoints.
 
 - Use `/v1`, resource nouns, snake_case JSON, UUIDv7 identifiers, and RFC 3339 UTC timestamps.
 - Derive tenant scope from authenticated credentials, never from request bodies. Apply RBAC scopes to every protected operation.

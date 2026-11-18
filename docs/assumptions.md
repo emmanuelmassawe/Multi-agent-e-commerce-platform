@@ -6,7 +6,7 @@
 - Keep Phase 0 within the stack explicitly prescribed by `AGENTS.md` and `CODEX_MASTER_PROMPT.md`; this records the supplied direction and does not treat proposed ADRs as accepted decisions.
 - Use placeholder local-only credentials in Compose so a developer can start dependencies. Replace them before any shared or deployed environment; no real secrets are included.
 - API readiness in the scaffold reports process readiness only. Dependency-aware checks belong with persistence and service wiring in later phases.
-- There is no Git repository metadata in the provided workspace, so a Conventional Commit cannot be created or a Git SHA recorded for this phase.
+- `docker compose config` and YAML parsing succeed, but `docker compose up --build -d` could not complete image pulls: the configured registry returned an authorization error, and dependent pulls were interrupted. Stack health and HTTP checks remain unverified.
 - No benchmark has been run; performance and cost figures are **not measured yet**.
 
 ## Product decisions still needed

@@ -1,0 +1,68 @@
+asyncapi: 3.0.0
+info:
+  title: CLOS Events API
+  version: 0.1.0
+  description: Initial event contract for agent run streaming and approvals. Expand before implementation.
+servers:
+  local:
+    host: localhost:8000
+    protocol: http
+    description: Local development API
+channels:
+  runEvents:
+    address: /v1/runs/{run_id}/events
+    parameters:
+      run_id:
+        description: UUIDv7 identifier for the agent run.
+        schema: { type: string, format: uuid }
+    messages:
+      runEvent:
+        $ref: '#/components/messages/RunEvent'
+  approvalEvents:
+    address: /v1/approvals/events
+    messages:
+      approvalEvent:
+        $ref: '#/components/messages/ApprovalEvent'
+operations:
+  streamRunEvents:
+    action: receive
+    channel: { $ref: '#/channels/runEvents' }
+    messages:
+      - $ref: '#/channels/runEvents/messages/runEvent'
+  streamApprovalEvents:
+    action: receive
+    channel: { $ref: '#/channels/approvalEvents' }
+    messages:
+      - $ref: '#/channels/approvalEvents/messages/approvalEvent'
+components:
+  messages:
+    RunEvent:
+      name: RunEvent
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/RunEvent'
+    ApprovalEvent:
+      name: ApprovalEvent
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ApprovalEvent'
+  schemas:
+    RunEvent:
+      type: object
+      required: [event_id, run_id, event_type, occurred_at]
+      properties:
+        event_id: { type: string, format: uuid }
+        run_id: { type: string, format: uuid }
+        event_type: { type: string, enum: [run_started, node_started, tool_started, tool_finished, token_usage, run_finished, run_failed] }
+        occurred_at: { type: string, format: date-time }
+        data: { type: object, additionalProperties: true }
+    ApprovalEvent:
+      type: object
+      required: [event_id, approval_id, event_type, occurred_at]
+      properties:
+        event_id: { type: string, format: uuid }
+        approval_id: { type: string, format: uuid }
+        event_type: { type: string, enum: [approval_requested, approval_decided, approval_expired] }
+        occurred_at: { type: string, format: date-time }
+        data: { type: object, additionalProperties: true }
+

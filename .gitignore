@@ -8,5 +8,8 @@ htmlcov/
 .env
 dist/
 build/
+node_modules/
+.next/
+*.tsbuildinfo
 *.py[cod]
 
