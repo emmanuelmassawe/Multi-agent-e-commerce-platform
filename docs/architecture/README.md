@@ -11,5 +11,5 @@ Diagrams are maintained as Mermaid source. Render validation is a CI requirement
 - [07 — Deployment](07-deployment.md)
 - [08 — Trust boundaries and threat model](08-security.md)
 
-These are target-state diagrams for the phased design. Phase 0 implements only an API health scaffold and local dependency containers.
+These diagrams describe the phased target. Phase 2 implements the supervisor graph and PostgreSQL checkpoint recovery; agent business actions arrive in Phase 3.
 

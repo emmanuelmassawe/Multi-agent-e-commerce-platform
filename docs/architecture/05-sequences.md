@@ -102,3 +102,7 @@ sequenceDiagram
   W2->>W2: resume from checkpoint with idempotency keys
 ```
 
+Phase 2 validates recovery by interrupting after the classification checkpoint, closing the first
+graph/checkpointer instance, creating a replacement instance, and resuming the same tenant/run
+thread from PostgreSQL. A process-level worker kill drill remains not measured yet.
+

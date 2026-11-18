@@ -20,6 +20,7 @@ jobs:
       DATABASE_ADMIN_URL: postgresql+asyncpg://clos:local-only-change-me@localhost:5432/clos
       DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
       TEST_DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
+      CHECKPOINT_DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
       CLOS_APP_PASSWORD: local-only-change-me
     steps:
       - uses: actions/checkout@v4
@@ -29,12 +30,14 @@ jobs:
       - run: uv sync --all-groups
       - run: uv run python scripts/prepare_test_database.py
       - run: uv run alembic upgrade head
+      - run: uv run python scripts/setup_checkpointer.py
       - run: uv run alembic downgrade base
       - run: uv run alembic upgrade head
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy .
       - run: uv run pytest --cov=clos.domain --cov=clos.application --cov-report=term-missing --cov-fail-under=85
+      - run: uv run pytest evals/
       - run: npx --yes @stoplight/spectral-cli lint --ruleset .spectral.yaml docs/api/openapi.yaml
       - run: npx --yes @asyncapi/cli validate docs/api/asyncapi.yaml
       - run: npm install --global @mermaid-js/mermaid-cli
