@@ -10,7 +10,7 @@ configure_logging(settings.log_level)
 celery_app = Celery(
     "clos",
     broker=settings.rabbitmq_url,
-    include=["clos.apps.worker.tasks"],
+    include=["clos.apps.worker.tasks", "clos.apps.worker.memory"],
 )
 celery_app.conf.update(
     task_serializer="json",
@@ -21,6 +21,7 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     broker_connection_retry_on_startup=True,
     task_default_queue="agent-runs",
+    beat_schedule={"dispatch-memory": {"task": "clos.dispatch_memory", "schedule": 15.0}},
 )
 
 

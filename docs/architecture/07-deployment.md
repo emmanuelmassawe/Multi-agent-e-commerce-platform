@@ -16,11 +16,12 @@ flowchart TB
     API --> PG
     API --> R
     API --> MQ
+    Beat[Celery Beat] --> MQ
     MQ --> Worker
     Worker --> PG
     Worker --> Q
   end
-  subgraph AWS[Future AWS account; no infrastructure deployed in Phase 0]
+  subgraph AWS[Future AWS account]
     Internet((Internet)) --> WAF[WAF + ALB in public subnets]
     WAF --> App[ECS or EKS workloads in private subnets]
     App --> Data[(Private RDS / Redis / MQ)]

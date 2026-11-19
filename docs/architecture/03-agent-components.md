@@ -33,6 +33,8 @@ flowchart LR
   LTools --> Tools
   STools --> Tools
   SRAG --> Memory
+  Memory --> Qdrant[Scoped hybrid ranking]
+  Memory --> SQL[Authorized source text]
 ```
 
 Phase 3 implements deterministic agent services behind replaceable ports and fake integrations.

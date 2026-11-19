@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import re
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
 
 
 def main() -> None:
+    renderer = shutil.which("mmdc")
+    if renderer is None:
+        raise SystemExit("Mermaid CLI (mmdc) is required on PATH")
     architecture_dir = Path("docs/architecture")
     diagrams = sorted(architecture_dir.glob("*.md"))
     rendered = 0
@@ -22,7 +26,7 @@ def main() -> None:
                 output_path = temp_path / f"{markdown_path.stem}-{index}.svg"
                 mermaid_path.write_text(block, encoding="utf-8")
                 subprocess.run(
-                    ["mmdc", "-i", str(mermaid_path), "-o", str(output_path)],
+                    [renderer, "-i", str(mermaid_path), "-o", str(output_path)],
                     check=True,
                 )
                 rendered += 1

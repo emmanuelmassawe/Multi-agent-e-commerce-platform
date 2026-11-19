@@ -54,7 +54,7 @@ sequenceDiagram
   L->>S: provide tenant/customer-scoped shipment facts
   S->>S: retrieve scoped evidence and draft notice
   S-->>M: return unsent draft for review
-  Note over L,S: Missing delay or notification policy remains unknown; Phase 3 sends no message
+  Note over L,S: Missing delay or notification policy remains unknown. Phase 3 sends no message
 ```
 
 ## Stockout risk to pricing consideration
@@ -73,7 +73,7 @@ sequenceDiagram
   else no markup rule
     P->>P: record risk consideration without inferring a price change
   end
-  P-->>H: return proposal; no price write in Phase 3
+  P-->>H: return proposal with no price write in Phase 3
 ```
 
 ## RAG ingestion and retrieval
@@ -87,12 +87,15 @@ sequenceDiagram
   participant Q as Qdrant
   participant A as Support agent
   U->>API: upload document
-  API->>PG: store source, chunks, tenant metadata
-  PG->>O: emit outbox event
+  API->>PG: store source and pending job atomically
+  PG->>O: claim job under tenant lock
+  O->>PG: parse source and stage deterministic chunks
   O->>Q: idempotent tenant-scoped upsert
+  O->>PG: commit chunks and completed receipt
   A->>PG: authorize and resolve tenant scope
   A->>Q: hybrid query with mandatory tenant filter
-  Q-->>A: ranked chunks
+  Q-->>A: ranked point IDs
+  A->>PG: load passages with tenant and customer visibility checks
 ```
 
 ## Outbox synchronization

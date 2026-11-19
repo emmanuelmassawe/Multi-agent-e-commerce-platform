@@ -330,6 +330,29 @@ class TokenUsage(TenantScoped, Base):
     cost_usd: Mapped[Decimal | None] = mapped_column(Numeric(18, 8))
 
 
+class MemoryDocument(TenantScoped, Base):
+    __tablename__ = "memory_documents"
+    customer_id: Mapped[UUID | None] = mapped_column(Uuid, ForeignKey("customers.id"))
+    source: Mapped[str] = mapped_column(String(200))
+    body: Mapped[str] = mapped_column(Text)
+
+
+class MemoryChunk(TenantScoped, Base):
+    __tablename__ = "memory_chunks"
+    document_id: Mapped[UUID] = mapped_column(
+        Uuid, ForeignKey("memory_documents.id", ondelete="CASCADE"), index=True
+    )
+    body: Mapped[str] = mapped_column(Text)
+
+
+class MemoryJob(TenantScoped, Base):
+    __tablename__ = "memory_jobs"
+    operation: Mapped[str] = mapped_column(String(20))
+    subject_id: Mapped[UUID | None] = mapped_column(Uuid)
+    fingerprint: Mapped[str | None] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(16), default="pending")
+
+
 TENANT_TABLE_NAMES = tuple(
     table.name for table in Base.metadata.sorted_tables if table.name != "tenants"
 )
