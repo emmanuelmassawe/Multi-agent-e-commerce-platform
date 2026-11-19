@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 from clos.apps.api.main import app
 
 
-
 @pytest.fixture
 def client() -> Iterator[TestClient]:
     """Keep the app lifespan and async database engine on one event loop."""
