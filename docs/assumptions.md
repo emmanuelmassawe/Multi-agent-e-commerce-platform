@@ -20,6 +20,11 @@
 - PostgreSQL migration 0003 adds a nullable tool idempotency key to existing approval rows. Approval
   context may contain confidential business or personal data and remains classified accordingly in
   the compliance inventory.
+- Migration 0003 upgraded, downgraded, and upgraded again on the local PostgreSQL 16 instance.
+  Approval, tenant-isolation, tool-idempotency, and checkpoint-recovery PostgreSQL integration tests
+  passed on 2026-11-19. CI/local Mermaid rendering remains unavailable because `mmdc` is not installed.
+- Approval processing and resume latency are not benchmarked yet. Prometheus exporters and Grafana
+  approval panels remain pending; the event stream uses durable audit rows.
 
 ## Phase 0
 

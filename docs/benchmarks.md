@@ -35,3 +35,9 @@ uv run python benchmarks/run_fake_agents.py
 
 These synthetic microsecond-scale timings are not production performance targets. Real integrations,
 concurrency, and business outcome rates are **not measured yet**.
+
+## Phase 4 approvals
+
+Approval decision latency, dashboard event delivery latency, and interrupt-to-resume latency are
+**not measured yet**. PostgreSQL integration tests validate correctness and checkpoint recovery but
+do not report performance numbers.

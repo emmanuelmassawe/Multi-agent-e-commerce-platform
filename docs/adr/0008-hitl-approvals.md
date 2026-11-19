@@ -23,9 +23,10 @@ Safety, resumability, auditability, approval expiry, and protection against retr
 Unit and LangGraph in-memory checkpoint tests verify that a write_high handler does not execute before
 an interrupt, rejects a rejected decision, validates a modified input against its Pydantic schema,
 and executes only after the persisted verifier accepts the exact approved input. PostgreSQL
-integration coverage is supplied for tenant scoping, idempotency, decisions, and expiry; results are
-not measured yet when the configured test database is unavailable. Notification provider delivery
-and production resume latency are not measured yet.
+integration tests passed on 2026-11-19 for tenant scoping, idempotent request creation, modified
+approval input, exact-input verification, expiry, and audit recording. The crash-recovery test also
+passed after the PostgreSQL checkpointer schema was initialized. Notification provider delivery and
+production resume latency are not measured yet.
 
 ## Decision
 

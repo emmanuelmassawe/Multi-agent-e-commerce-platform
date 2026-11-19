@@ -86,7 +86,7 @@ class SQLApprovalWorkflow(ApprovalWorkflowPort):
                 **context,
                 "requested_tool_input": tool_input,
                 "tool_input": tool_input,
-                "diff": context.get("diff", {"before": tool_input, "after": tool_input}),
+                "diff": context.get("diff", {"before": None, "after": tool_input}),
                 "explanation": context.get(
                     "explanation", "High-risk action requires human review."
                 ),
