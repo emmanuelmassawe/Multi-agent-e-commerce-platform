@@ -14,7 +14,6 @@ channels:
     parameters:
       run_id:
         description: UUIDv7 identifier for the agent run.
-        schema: { type: string, format: uuid }
     messages:
       runEvent:
         $ref: '#/components/messages/RunEvent'
