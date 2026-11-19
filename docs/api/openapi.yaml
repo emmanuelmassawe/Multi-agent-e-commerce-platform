@@ -105,6 +105,92 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { $ref: '#/components/responses/NotFound' }
+  /approvals:
+    get:
+      operationId: listApprovalRequests
+      summary: List approval requests in the authenticated tenant
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+        - name: cursor
+          in: query
+          schema: { type: [string, 'null'], format: uuid }
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, approved, rejected] }
+      responses:
+        '200':
+          description: Tenant-scoped approval requests
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApprovalPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /approvals/{approval_id}/approve:
+    post:
+      operationId: approveRequest
+      summary: Approve a pending high-risk agent action
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ApprovalId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Approval recorded and run queued to resume
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApprovalRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /approvals/{approval_id}/reject:
+    post:
+      operationId: rejectRequest
+      summary: Reject a pending high-risk agent action
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ApprovalId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Rejection recorded and run queued to resume
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApprovalRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /approvals/{approval_id}:
+    patch:
+      operationId: modifyAndApproveRequest
+      summary: Modify the proposed tool input and approve the updated action
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ApprovalId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tool_input]
+              properties:
+                tool_input: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Updated action approved and run queued to resume
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApprovalRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
   /health/live:
     get:
       operationId: getLiveness
@@ -140,6 +226,11 @@ components:
       scheme: bearer
       bearerFormat: JWT or CLOS API key
   parameters:
+    ApprovalId:
+      name: approval_id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
     IdempotencyKey:
       name: Idempotency-Key
       in: header
@@ -161,7 +252,34 @@ components:
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: Approval is already decided or expired
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
   schemas:
+    ApprovalRequest:
+      type: object
+      required: [approval_id, run_id, action, risk_level, status, context, expires_at, created_at]
+      properties:
+        approval_id: { type: string, format: uuid }
+        run_id: { type: string, format: uuid }
+        action: { type: string }
+        risk_level: { type: string, const: write_high }
+        status: { type: string, enum: [pending, approved, rejected] }
+        context: { type: object, additionalProperties: true }
+        expires_at: { type: string, format: date-time }
+        created_at: { type: string, format: date-time }
+        decided_at: { type: [string, 'null'], format: date-time }
+        decided_by: { type: [string, 'null'], format: uuid }
+    ApprovalPage:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/ApprovalRequest' }
+        next_cursor: { type: [string, 'null'], format: uuid }
     TokenPair:
       type: object
       required: [access_token, refresh_token, token_type]

@@ -1,6 +1,6 @@
 """Application settings loaded from environment variables."""
 
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     gemini_fallback_model: str = "gemini-3.6-flash"
     access_token_seconds: int = 900
     refresh_token_days: int = 30
+    approval_expiry_seconds: int | None = Field(default=None, ge=1)
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 

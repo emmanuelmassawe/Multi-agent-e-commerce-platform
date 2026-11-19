@@ -1,5 +1,26 @@
 # Assumptions and unresolved product inputs
 
+## Phase 4
+
+- Read all files under `docs/my-docs/` at phase start on 2026-11-19. Approval approvers, channels,
+  and expiration durations are still unspecified. API approval access follows existing RBAC
+  `manage_approvals` permission (manager and agent-operator roles); no additional approver role is
+  inferred.
+- `APPROVAL_EXPIRY_SECONDS` is required before a new `write_high` approval can be requested. No
+  default expiration duration is invented. Expired approvals are auto-rejected, audited, and their
+  graph resumes with a rejection.
+- Dashboard approval notifications stream persisted tenant-scoped audit events over SSE. Email and
+  WhatsApp are notification ports with deterministic fakes only; the owner has not selected providers
+  or recipients, so no external message is sent.
+- `PATCH /v1/approvals/{approval_id}` modifies only the validated tool input and approves that exact
+  input. The resumed tool validates it again and verifies the database record before execution.
+- Approval API and resume tasks are implemented, but Phase 3 did not wire provider-backed agent
+  runners into the worker. Production tool execution therefore still requires those runners to be
+  configured; the HITL gate itself fails closed without a requester, interrupt, and persisted verifier.
+- PostgreSQL migration 0003 adds a nullable tool idempotency key to existing approval rows. Approval
+  context may contain confidential business or personal data and remains classified accordingly in
+  the compliance inventory.
+
 ## Phase 0
 
 - Read all files under `docs/my-docs/` on 2026-11-18. The folder contains its README and unfilled requirements and business-rules templates; no merchant policies or integration priorities have been supplied.

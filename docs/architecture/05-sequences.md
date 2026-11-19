@@ -27,13 +27,19 @@ sequenceDiagram
   participant A as Approval service
   actor H as Authorized human
   participant DB as Postgres checkpoint
-  G->>A: request write_high approval
-  A->>DB: persist approval request and audit record
+  G->>A: request write_high approval with tool input and diff
+  A->>DB: persist request, expiry, and audit record idempotently
+  A-->>H: notify through tenant-scoped dashboard SSE
   G->>DB: checkpoint and interrupt
-  H->>A: approve or reject
-  A->>DB: persist decision
-  A->>G: resume with explicit decision
-  G->>G: execute only if approved and policy still permits
+  H->>A: approve / reject / modify and approve
+  A->>DB: persist decision and audit record
+  A->>Q: enqueue tenant/run-scoped resume
+  Q->>G: resume with approval ID, decision, and approved input
+  G->>A: verify persisted decision and exact input
+  A-->>G: allow only current, approved request
+  G->>G: execute idempotent tool or return rejected
+  A->>DB: auto-reject expired request and audit
+  A->>Q: resume with rejection
 ```
 
 ## Shipment delay cross-agent flow

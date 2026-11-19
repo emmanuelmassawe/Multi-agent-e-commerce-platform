@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from clos.adapters.db.session import make_session_factory
 from clos.application.auth import AuthenticationError, AuthorizationError
+from clos.apps.api.approval_routes import router as approval_router
 from clos.apps.api.auth_routes import router as auth_router
 from clos.config import settings
 from clos.logging import configure_logging
@@ -34,6 +35,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="CLOS API", version="0.1.0", lifespan=lifespan)
 app.include_router(auth_router)
+app.include_router(approval_router)
 
 
 @app.exception_handler(AuthenticationError)
@@ -63,6 +65,33 @@ async def authorization_error_handler(_: Request, exc: AuthorizationError) -> JS
             "status": 403,
             "detail": str(exc),
             "code": "FORBIDDEN",
+            "trace_id": str(uuid4()),
+        },
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_problem_handler(_: Request, exc: HTTPException) -> JSONResponse:
+    codes = {
+        400: "BAD_REQUEST",
+        401: "UNAUTHORIZED",
+        403: "FORBIDDEN",
+        404: "NOT_FOUND",
+        409: "CONFLICT",
+        422: "VALIDATION_FAILED",
+        429: "RATE_LIMITED",
+        503: "SERVICE_UNAVAILABLE",
+    }
+    return JSONResponse(
+        status_code=exc.status_code,
+        media_type="application/problem+json",
+        headers=exc.headers,
+        content={
+            "type": "about:blank",
+            "title": "Request failed",
+            "status": exc.status_code,
+            "detail": str(exc.detail),
+            "code": codes.get(exc.status_code, "REQUEST_FAILED"),
             "trace_id": str(uuid4()),
         },
     )

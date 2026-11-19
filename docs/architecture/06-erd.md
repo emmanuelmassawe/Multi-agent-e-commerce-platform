@@ -64,7 +64,7 @@ erDiagram
   MESSAGE { uuid id PK; uuid tenant_id FK; uuid conversation_id FK; string direction; text body }
   AGENT_RUN { uuid id PK; uuid tenant_id FK; string agent_name; string status; string autonomy_mode }
   AUTONOMY_SETTING { uuid id PK; uuid tenant_id FK; string agent_name; string mode; uuid updated_by FK }
-  APPROVAL_REQUEST { uuid id PK; uuid tenant_id FK; uuid agent_run_id FK; string action; string risk_level }
+  APPROVAL_REQUEST { uuid id PK; uuid tenant_id FK; uuid agent_run_id FK; string action; string tool_idempotency_key; string risk_level; string status; json context; datetime expires_at; datetime decided_at }
   TOOL_CALL { uuid id PK; uuid tenant_id FK; uuid agent_run_id FK; string tool_name; string risk_level }
   AUDIT_LOG { uuid id PK; uuid tenant_id FK; uuid actor_id FK; string action; string entity_type }
   TOKEN_USAGE { uuid id PK; uuid tenant_id FK; uuid agent_run_id FK; string model; int input_tokens; int output_tokens }

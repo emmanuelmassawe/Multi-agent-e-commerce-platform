@@ -266,9 +266,19 @@ class AutonomySetting(TenantScoped, Base):
 
 class ApprovalRequest(TenantScoped, Base):
     __tablename__ = "approval_requests"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "agent_run_id",
+            "action",
+            "tool_idempotency_key",
+            name="uq_approvals_run_action_idempotency",
+        ),
+    )
 
     agent_run_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("agent_runs.id"), nullable=False)
     action: Mapped[str] = mapped_column(String(160), nullable=False)
+    tool_idempotency_key: Mapped[str | None] = mapped_column(String(200))
     risk_level: Mapped[str] = mapped_column(String(24), nullable=False)
     status: Mapped[str] = mapped_column(String(24), nullable=False, default="pending")
     context: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)

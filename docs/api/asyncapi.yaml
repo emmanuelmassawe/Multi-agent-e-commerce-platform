@@ -2,7 +2,7 @@ asyncapi: 3.0.0
 info:
   title: CLOS Events API
   version: 0.1.0
-  description: Initial event contract for agent run streaming and approvals. Expand before implementation.
+  description: SSE event contracts for agent runs and tenant-scoped human approvals.
 servers:
   local:
     host: localhost:8000
@@ -58,11 +58,17 @@ components:
         data: { type: object, additionalProperties: true }
     ApprovalEvent:
       type: object
-      required: [event_id, approval_id, event_type, occurred_at]
+      required: [event_id, approval_id, event_type, occurred_at, data]
       properties:
         event_id: { type: string, format: uuid }
         approval_id: { type: string, format: uuid }
         event_type: { type: string, enum: [approval_requested, approval_decided, approval_expired] }
         occurred_at: { type: string, format: date-time }
-        data: { type: object, additionalProperties: true }
+        data:
+          type: object
+          required: [run_id, tool, status]
+          properties:
+            run_id: { type: string, format: uuid }
+            tool: { type: string }
+            status: { type: string, enum: [pending, approved, rejected] }
 

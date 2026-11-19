@@ -24,13 +24,17 @@ This draft classifies the Phase 1 schema. `id`, `tenant_id`, `created_at`, and `
 | `messages` | `body`: likely personal data and customer content; `created_by`: staff identity; minimize and apply retention controls. |
 | `agent_runs` | `explanation`: may contain personal or merchant-confidential context; redact before tracing. Agent/status/autonomy fields: operational metadata. |
 | `autonomy_settings` | mode and `updated_by`: staff access-control data; tenant-scoped. |
-| `approval_requests` | `context`: may contain personal or confidential data; `requested_by`, `decided_by`: staff identifiers; action/risk/status: audit data. |
+| `approval_requests` | `context`: may contain personal or confidential data; `requested_by`, `decided_by`: staff identifiers; `tool_idempotency_key`: operational idempotency metadata; action/risk/status/expiry: audit data. |
 | `tool_calls` | `input_data`, `output_data`: may include personal or confidential data; idempotency key and risk fields: security metadata. |
 | `audit_logs` | `actor_id`: staff identifier; `details`: may contain personal/confidential data and must be minimized; action/entity identifiers: security audit data. |
 | `token_usage` | model, token counts, cost: operational/cost metadata; run linkage is tenant-restricted. |
 | Gemini API request | Supervisor prompt contains the merchant's request; direct email, phone-number, and credential-shaped values are redacted before transmission. It may still contain identifying context that regex redaction does not detect. No customer/order history is attached in Phase 2. Gemini free-tier prompts may be used to improve provider products; customer-confidential content must stay out until legal/privacy review and stronger detection are complete. |
 
 Retention periods, lawful basis, DSAR export/delete behavior, backup deletion, and regional residency are **not specified yet**. Define and enforce them in later phases. This inventory is a draft for legal review, not legal advice.
+
+Phase 4 adds `approval_requests.tool_idempotency_key` as internal operational metadata. The approval
+context also stores the proposed tool input, diff, explanation, and decision idempotency key; classify
+that context as potentially personal/confidential and minimize it at tool design time.
 
 The owner selected the Gemini free tier as the initial LLM provider. Review Google's current privacy
 and data-use terms before sending real merchant/customer data; the phase 2 adapter only redacts

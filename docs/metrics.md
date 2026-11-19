@@ -33,6 +33,17 @@ dashboards and alert thresholds are not measured/configured yet.
 These proposed business metrics have no live exporter or dashboard yet. The Phase 3 fake benchmark
 measures only serial in-process operation latency and is not a business outcome or production SLO.
 
+## Phase 4 approval metrics
+
+| Metric | Labels | Source | Status |
+|---|---|---|---|
+| `approvals_pending` | tenant, agent | approval request rows | instrumentation pending |
+| `approval_latency_seconds` | tenant, agent, outcome | created/decided timestamps | instrumentation pending |
+| `approval_outcome_total` | tenant, agent, outcome | approval and audit rows | instrumentation pending |
+
+The dashboard SSE stream exposes individual tenant-scoped approval events. Prometheus export and
+Grafana panels for these metrics are **not implemented yet**.
+
 ## Benchmark status
 
 The synthetic supervisor graph benchmark has been run: 500 serial runs across five route cases,

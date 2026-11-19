@@ -4,10 +4,11 @@ import asyncio
 import random
 import time
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Protocol
 from uuid import UUID
 
+from langgraph.types import interrupt
 from pydantic import BaseModel, ValidationError
 
 from clos.agents.budgets import BudgetEnforcer
@@ -43,8 +44,26 @@ class IdempotencyPort(Protocol):
 
 class ApprovalVerifierPort(Protocol):
     async def is_approved(
-        self, tenant_id: UUID, run_id: UUID, approval_id: UUID, tool_name: str
+        self,
+        tenant_id: UUID,
+        run_id: UUID,
+        approval_id: UUID,
+        tool_name: str,
+        tool_input: dict[str, object],
     ) -> bool: ...
+
+
+class ApprovalRequesterPort(Protocol):
+    async def request_tool_approval(
+        self,
+        tenant_id: UUID,
+        run_id: UUID,
+        tool_name: str,
+        tool_input: dict[str, object],
+        *,
+        context: dict[str, object] | None = None,
+        idempotency_key: str,
+    ) -> object: ...
 
 
 class InMemoryIdempotencyStore:
@@ -86,6 +105,7 @@ class ToolContext:
     approved: bool = False
     approval_id: UUID | None = None
     kill_switch_active: bool = False
+    approval_context: dict[str, object] | None = None
 
 
 ToolHandler = Callable[[BaseModel, ToolContext], Awaitable[object]]
@@ -119,6 +139,8 @@ class ToolRegistry:
         jitter: Callable[[float, float], float] = random.uniform,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
         approval_verifier: ApprovalVerifierPort | None = None,
+        approval_requester: ApprovalRequesterPort | None = None,
+        interrupt_fn: Callable[[dict[str, object]], object] = interrupt,
     ) -> None:
         self._idempotency = idempotency
         self._budget = budget
@@ -127,6 +149,8 @@ class ToolRegistry:
         self._jitter = jitter
         self._sleep = sleep
         self._approval_verifier = approval_verifier
+        self._approval_requester = approval_requester
+        self._interrupt = interrupt_fn
         self._started_at = time.monotonic()
 
     def register(self, spec: ToolSpec) -> None:
@@ -153,7 +177,14 @@ class ToolRegistry:
             parsed = spec.input_model.model_validate(raw_input)
         except ValidationError as exc:
             raise ToolInputError("Tool input failed schema validation") from exc
-        await self._enforce_policy(spec, context)
+        execution_context = context
+        rejected_approval_id: UUID | None = None
+        if spec.risk_level == RiskLevel.WRITE_HIGH:
+            parsed, execution_context, rejected_approval_id = await self._approval_gate(
+                name, spec.input_model, parsed, context
+            )
+        if spec.risk_level != RiskLevel.WRITE_HIGH:
+            await self._enforce_policy(spec, execution_context)
         scoped_key = f"{context.tenant_id}:{context.run_id}:{name}:{context.idempotency_key}"
 
         async def run_with_retries() -> object:
@@ -163,8 +194,10 @@ class ToolRegistry:
                 self._budget.check_time(elapsed)
                 remaining = self._budget.limits.max_wall_seconds - elapsed
                 try:
+                    if rejected_approval_id is not None:
+                        return {"status": "rejected", "approval_id": str(rejected_approval_id)}
                     return await asyncio.wait_for(
-                        spec.handler(parsed, context),
+                        spec.handler(parsed, execution_context),
                         timeout=min(spec.timeout_seconds, remaining),
                     )
                 except Exception:
@@ -181,7 +214,74 @@ class ToolRegistry:
             input_data=parsed.model_dump(mode="json"),
         )
 
-    async def _enforce_policy(self, spec: ToolSpec, context: ToolContext) -> None:
+    async def _approval_gate(
+        self,
+        tool_name: str,
+        input_model: type[BaseModel],
+        parsed: BaseModel,
+        context: ToolContext,
+    ) -> tuple[BaseModel, ToolContext, UUID | None]:
+        input_data = parsed.model_dump(mode="json")
+        if context.kill_switch_active:
+            raise ToolPolicyError("Writes are blocked while the kill switch is active")
+        if context.approved and context.approval_id is not None:
+            await self._enforce_policy(
+                ToolSpec(tool_name, input_model, RiskLevel.WRITE_HIGH, _unused_handler),
+                context,
+                input_data,
+            )
+            return parsed, context, None
+        if self._approval_requester is None or self._approval_verifier is None:
+            raise ToolPolicyError(
+                "High-risk tools require an approved request and an approval workflow"
+            )
+        item = await self._approval_requester.request_tool_approval(
+            context.tenant_id,
+            context.run_id,
+            tool_name,
+            input_data,
+            context=context.approval_context,
+            idempotency_key=context.idempotency_key,
+        )
+        approval_id = getattr(item, "approval_id", None)
+        if not isinstance(approval_id, UUID):
+            raise ToolPolicyError("Approval workflow did not return a valid request ID")
+        resumed = self._interrupt(
+            {
+                "type": "approval_required",
+                "approval_id": str(approval_id),
+                "tenant_id": str(context.tenant_id),
+                "run_id": str(context.run_id),
+                "tool_name": tool_name,
+                "tool_input": input_data,
+            }
+        )
+        if not isinstance(resumed, dict) or resumed.get("approval_id") != str(approval_id):
+            raise ToolPolicyError("Approval resume payload does not match the pending request")
+        decision = resumed.get("decision")
+        if decision == "rejected":
+            return parsed, context, approval_id
+        if decision != "approved":
+            raise ToolPolicyError("Approval decision is missing or invalid")
+        modified_input = resumed.get("tool_input", input_data)
+        try:
+            parsed = input_model.model_validate(modified_input)
+        except ValidationError as exc:
+            raise ToolInputError("Approved tool input failed schema validation") from exc
+        authorized_context = replace(context, approved=True, approval_id=approval_id)
+        await self._enforce_policy(
+            ToolSpec(tool_name, input_model, RiskLevel.WRITE_HIGH, _unused_handler),
+            authorized_context,
+            parsed.model_dump(mode="json"),
+        )
+        return parsed, authorized_context, None
+
+    async def _enforce_policy(
+        self,
+        spec: ToolSpec,
+        context: ToolContext,
+        tool_input: dict[str, object] | None = None,
+    ) -> None:
         if spec.risk_level == RiskLevel.READ:
             return
         if context.kill_switch_active:
@@ -194,10 +294,18 @@ class ToolRegistry:
             ):
                 raise ToolPolicyError("High-risk tools require an approved request")
             is_approved = await self._approval_verifier.is_approved(
-                context.tenant_id, context.run_id, context.approval_id, spec.name
+                context.tenant_id,
+                context.run_id,
+                context.approval_id,
+                spec.name,
+                tool_input or {},
             )
             if not is_approved:
                 raise ToolPolicyError("Approval request does not authorize this tool")
             return
         if not may_execute_write(context.autonomy_mode, spec.risk_level, context.in_rule):
             raise ToolPolicyError("Autonomy policy does not permit this write")
+
+
+async def _unused_handler(_data: BaseModel, _context: ToolContext) -> object:
+    raise AssertionError("Policy-only tool spec cannot execute")

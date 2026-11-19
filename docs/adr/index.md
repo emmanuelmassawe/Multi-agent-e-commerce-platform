@@ -9,7 +9,7 @@
 | [0005](0005-postgres-qdrant-memory.md) | Postgres source of truth and Qdrant index | proposed |
 | [0006](0006-celery-rabbitmq.md) | Celery and RabbitMQ | accepted |
 | [0007](0007-tenant-isolation-rls.md) | Tenant isolation and RLS | proposed |
-| [0008](0008-hitl-approvals.md) | Human approval for high-risk actions | proposed |
+| [0008](0008-hitl-approvals.md) | Human approval for high-risk actions | accepted |
 | [0009](0009-contract-first-api.md) | Contract-first versioned API | proposed |
 | [0010](0010-observability.md) | Langfuse, OTel, Prometheus | proposed |
 | [0011](0011-guardrails.md) | Guardrails interface | proposed |

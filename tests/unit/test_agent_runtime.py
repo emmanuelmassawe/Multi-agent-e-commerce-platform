@@ -2,10 +2,13 @@
 
 import asyncio
 from types import SimpleNamespace
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 from uuid import UUID, uuid4
 
 import pytest
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command
 from pydantic import BaseModel
 
 from clos.adapters.llm.factory import build_worker_llm
@@ -18,6 +21,7 @@ from clos.adapters.llm.gemini import (
 from clos.adapters.llm.providers import FakeLLM, FallbackLLM, ProviderLLMAdapter
 from clos.agents.budgets import BudgetEnforcer, BudgetExceeded, BudgetLimits
 from clos.agents.tools import (
+    ApprovalRequesterPort,
     ApprovalVerifierPort,
     InMemoryIdempotencyStore,
     ToolContext,
@@ -206,7 +210,12 @@ def test_typed_tool_validates_gates_risk_and_reuses_idempotent_result() -> None:
 
         class ApprovedRequest(ApprovalVerifierPort):
             async def is_approved(
-                self, _tenant_id: UUID, _run_id: UUID, _approval_id: UUID, _tool_name: str
+                self,
+                _tenant_id: UUID,
+                _run_id: UUID,
+                _approval_id: UUID,
+                _tool_name: str,
+                _tool_input: dict[str, object],
             ) -> bool:
                 return True
 
@@ -248,5 +257,212 @@ def test_typed_tool_retries_temporary_failure_then_succeeds() -> None:
         )
         assert result == "ok"
         assert attempts == 2
+
+    asyncio.run(scenario())
+
+
+def test_write_high_interrupts_and_executes_only_verified_approved_input() -> None:
+    async def scenario() -> None:
+        order: list[str] = []
+        approval_id = uuid4()
+        expected_input = {"value": 9}
+
+        class Requester(ApprovalRequesterPort):
+            async def request_tool_approval(
+                self,
+                _tenant_id: UUID,
+                _run_id: UUID,
+                _tool_name: str,
+                tool_input: dict[str, object],
+                *,
+                context: dict[str, object] | None = None,
+                idempotency_key: str,
+            ) -> object:
+                assert tool_input == {"value": 1}
+                assert context == {"explanation": "test diff"}
+                assert idempotency_key == "approval-1"
+                order.append("requested")
+                return SimpleNamespace(approval_id=approval_id)
+
+        class Verifier(ApprovalVerifierPort):
+            async def is_approved(
+                self,
+                _tenant_id: UUID,
+                _run_id: UUID,
+                received_approval_id: UUID,
+                tool_name: str,
+                tool_input: dict[str, object],
+            ) -> bool:
+                assert received_approval_id == approval_id
+                assert tool_name == "dangerous"
+                assert tool_input == expected_input
+                order.append("verified")
+                return True
+
+        async def handler(data: BaseModel, _context: ToolContext) -> object:
+            order.append("executed")
+            return {"written": data.value}  # type: ignore[attr-defined]
+
+        def resume(payload: dict[str, object]) -> object:
+            assert payload["tool_name"] == "dangerous"
+            order.append("interrupted")
+            return {
+                "approval_id": str(approval_id),
+                "decision": "approved",
+                "tool_input": expected_input,
+            }
+
+        registry = ToolRegistry(
+            InMemoryIdempotencyStore(),
+            BudgetEnforcer(BudgetLimits()),
+            approval_requester=Requester(),
+            approval_verifier=Verifier(),
+            interrupt_fn=resume,
+        )
+        registry.register(ToolSpec("dangerous", Input, RiskLevel.WRITE_HIGH, handler))
+        result = await registry.execute(
+            "dangerous",
+            {"value": 1},
+            ToolContext(
+                uuid4(), uuid4(), "approval-1", approval_context={"explanation": "test diff"}
+            ),
+        )
+        assert result == {"written": 9}
+        assert order == ["requested", "interrupted", "verified", "executed"]
+
+    asyncio.run(scenario())
+
+
+def test_write_high_rejection_and_kill_switch_never_execute() -> None:
+    async def scenario() -> None:
+        calls = 0
+        approval_id = uuid4()
+
+        class Requester(ApprovalRequesterPort):
+            async def request_tool_approval(
+                self,
+                _tenant_id: UUID,
+                _run_id: UUID,
+                _tool_name: str,
+                _tool_input: dict[str, object],
+                *,
+                context: dict[str, object] | None = None,
+                idempotency_key: str,
+            ) -> object:
+                del context, idempotency_key
+                return SimpleNamespace(approval_id=approval_id)
+
+        async def handler(_data: BaseModel, _context: ToolContext) -> object:
+            nonlocal calls
+            calls += 1
+            return {"written": True}
+
+        registry = ToolRegistry(
+            InMemoryIdempotencyStore(),
+            BudgetEnforcer(BudgetLimits()),
+            approval_requester=Requester(),
+            approval_verifier=cast(ApprovalVerifierPort, SimpleNamespace()),
+            interrupt_fn=lambda _payload: {
+                "approval_id": str(approval_id),
+                "decision": "rejected",
+            },
+        )
+        registry.register(ToolSpec("dangerous", Input, RiskLevel.WRITE_HIGH, handler))
+        ctx = ToolContext(uuid4(), uuid4(), "reject-1")
+        result = await registry.execute("dangerous", {"value": 1}, ctx)
+        assert result == {"status": "rejected", "approval_id": str(approval_id)}
+        with pytest.raises(ToolPolicyError, match="kill switch"):
+            await registry.execute(
+                "dangerous",
+                {"value": 1},
+                ToolContext(ctx.tenant_id, ctx.run_id, "reject-2", kill_switch_active=True),
+            )
+        assert calls == 0
+
+    asyncio.run(scenario())
+
+
+def test_langgraph_interrupt_resumes_only_after_persisted_approval() -> None:
+    async def scenario() -> None:
+        approval_id, tenant_id, run_id = uuid4(), uuid4(), uuid4()
+        state = {"status": "pending", "tool_input": {"value": 4}}
+        writes: list[int] = []
+
+        class Requester(ApprovalRequesterPort):
+            async def request_tool_approval(
+                self,
+                _tenant_id: UUID,
+                _run_id: UUID,
+                _tool_name: str,
+                tool_input: dict[str, object],
+                *,
+                context: dict[str, object] | None = None,
+                idempotency_key: str,
+            ) -> object:
+                assert tool_input == state["tool_input"]
+                assert context == {"diff": "price change"}
+                assert idempotency_key == "graph-write"
+                return SimpleNamespace(approval_id=approval_id)
+
+        class Verifier(ApprovalVerifierPort):
+            async def is_approved(
+                self,
+                _tenant_id: UUID,
+                _run_id: UUID,
+                request_id: UUID,
+                tool_name: str,
+                tool_input: dict[str, object],
+            ) -> bool:
+                return (
+                    request_id == approval_id
+                    and tool_name == "dangerous"
+                    and state["status"] == "approved"
+                    and tool_input == state["tool_input"]
+                )
+
+        async def handler(data: BaseModel, _context: ToolContext) -> object:
+            writes.append(data.value)  # type: ignore[attr-defined]
+            return {"written": data.value}  # type: ignore[attr-defined]
+
+        registry = ToolRegistry(
+            InMemoryIdempotencyStore(),
+            BudgetEnforcer(BudgetLimits()),
+            approval_requester=Requester(),
+            approval_verifier=Verifier(),
+        )
+        registry.register(ToolSpec("dangerous", Input, RiskLevel.WRITE_HIGH, handler))
+
+        class GraphState(TypedDict):
+            result: object
+
+        async def execute_write(_state: GraphState) -> dict[str, object]:
+            result = await registry.execute(
+                "dangerous",
+                state["tool_input"],
+                ToolContext(
+                    tenant_id,
+                    run_id,
+                    "graph-write",
+                    approval_context={"diff": "price change"},
+                ),
+            )
+            return {"result": result}
+
+        builder = cast(Any, StateGraph(GraphState))
+        builder.add_node("write", execute_write)
+        builder.add_edge(START, "write")
+        builder.add_edge("write", END)
+        graph = cast(Any, builder.compile(checkpointer=InMemorySaver()))
+        config = {"configurable": {"thread_id": f"{tenant_id}:{run_id}"}}
+
+        pending = await graph.ainvoke({}, config)
+        assert pending.get("__interrupt__")
+        assert writes == []
+        state["status"] = "approved"
+        resumed = await graph.ainvoke(
+            Command(resume={"approval_id": str(approval_id), "decision": "approved"}), config
+        )
+        assert resumed["result"] == {"written": 4}
+        assert writes == [4]
 
     asyncio.run(scenario())

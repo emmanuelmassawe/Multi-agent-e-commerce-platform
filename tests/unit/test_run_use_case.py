@@ -1,8 +1,11 @@
 """Application orchestration is tenant-scoped and persists usage summaries."""
 
 import asyncio
+from types import SimpleNamespace
 from typing import Any
 from uuid import UUID, uuid4
+
+from langgraph.types import Command
 
 from clos.agents.supervisor.graph import UsageRecord
 from clos.application.runs import execute_supervisor_run
@@ -75,5 +78,57 @@ def test_supervisor_run_uses_tenant_scoped_checkpoint_and_persists_tokens() -> N
         assert repository.finished["status"] == "completed"
         assert repository.finished["usage_records"][0]["input_tokens"] == 4
         assert repository.finished["explanation"]["budget"]["steps"] == 4
+
+    asyncio.run(scenario())
+
+
+def test_interrupted_run_is_persisted_as_awaiting_approval_and_resumes_with_command() -> None:
+    async def scenario() -> None:
+        tenant_id, run_id = uuid4(), uuid4()
+        payload: dict[str, object] = {"approval_id": str(uuid4()), "decision": "approved"}
+
+        class InterruptGraph:
+            def __init__(self) -> None:
+                self.inputs: list[object] = []
+
+            async def ainvoke(
+                self, state: object, config: dict[str, dict[str, str]]
+            ) -> dict[str, Any]:
+                self.inputs.append(state)
+                assert config["configurable"]["thread_id"] == f"{tenant_id}:{run_id}"
+                if isinstance(state, Command):
+                    return {
+                        "status": "completed",
+                        "response": "approved action complete",
+                        "usage_records": [],
+                    }
+                return {
+                    "status": "running",
+                    "__interrupt__": [
+                        SimpleNamespace(value={"approval_id": payload["approval_id"]})
+                    ],
+                    "usage_records": [],
+                }
+
+        graph, repository = InterruptGraph(), RepositoryFake()
+        pending = await execute_supervisor_run(
+            graph, repository, tenant_id=tenant_id, run_id=run_id, message="change price"
+        )
+        assert pending["pending_approval"]["approval_id"] == payload["approval_id"]
+        assert repository.finished is not None
+        assert repository.finished["status"] == "awaiting_approval"
+
+        resumed = await execute_supervisor_run(
+            graph,
+            repository,
+            tenant_id=tenant_id,
+            run_id=run_id,
+            message="",
+            resume=payload,
+        )
+        assert resumed["status"] == "completed"
+        assert isinstance(graph.inputs[-1], Command)
+        assert graph.inputs[-1].resume == payload
+        assert repository.finished["status"] == "completed"
 
     asyncio.run(scenario())
