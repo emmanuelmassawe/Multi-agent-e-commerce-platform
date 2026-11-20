@@ -29,13 +29,16 @@ def test_graph_resumes_after_worker_process_is_killed() -> None:
         stderr=subprocess.PIPE,
         text=True,
     )
-    deadline = time.monotonic() + 30
+    # This outer bound includes interpreter startup and imports under coverage.
+    # The probe independently bounds database and graph work to 30 seconds.
+    deadline = time.monotonic() + 90
     try:
         while not marker.exists() and worker.poll() is None and time.monotonic() < deadline:
             time.sleep(0.05)
+        if worker.poll() is not None:
+            pytest.fail(f"Worker exited before termination: {worker.communicate()[1]}")
         assert marker.exists(), "worker did not persist its pause checkpoint"
-        if worker.poll() is None:
-            worker.terminate()
+        worker.terminate()
         worker.wait(timeout=10)
         resumed = subprocess.run(
             [sys.executable, probe, "resume", str(tenant_id), str(run_id), str(marker)],
@@ -43,7 +46,7 @@ def test_graph_resumes_after_worker_process_is_killed() -> None:
             capture_output=True,
             text=True,
             check=True,
-            timeout=30,
+            timeout=90,
         )
         assert "completed" in resumed.stdout
         assert "inventory" in resumed.stdout and "pricing" in resumed.stdout

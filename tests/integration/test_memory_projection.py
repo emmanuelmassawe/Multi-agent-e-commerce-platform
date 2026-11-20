@@ -81,6 +81,7 @@ async def scenario() -> None:
             with pytest.raises(LookupError):
                 await repo.search(b, alice, "private", limit=5)
             hits = await repo.search(a, alice, "private", limit=5)
+            assert hits[0].text == "private alice"
             assert {h.text for h in hits} == {"shared policy", "private alice"}
             baseline = await repo.vectors.manifest(a)
             assert len(baseline) == 3

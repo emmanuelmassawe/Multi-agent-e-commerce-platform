@@ -56,7 +56,8 @@ if __name__ == "__main__":
             return asyncio.SelectorEventLoop(selectors.SelectSelector())
         return asyncio.new_event_loop()
 
-    asyncio.run(
-        main(sys.argv[1], UUID(sys.argv[2]), UUID(sys.argv[3]), Path(sys.argv[4])),
-        loop_factory=loop_factory,
-    )
+    async def probe() -> None:
+        async with asyncio.timeout(30):
+            await main(sys.argv[1], UUID(sys.argv[2]), UUID(sys.argv[3]), Path(sys.argv[4]))
+
+    asyncio.run(probe(), loop_factory=loop_factory)

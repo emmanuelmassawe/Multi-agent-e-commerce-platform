@@ -132,6 +132,8 @@ class QdrantVectorStore:
                         "using": "bm25",
                         "query": {"indices": list(vec.sparse), "values": list(vec.sparse.values())},
                         "filter": where,
+                        # Only lexical matches should contribute a sparse rank to RRF.
+                        "score_threshold": 1e-12,
                         "limit": limit * 3,
                     },
                 ],
@@ -140,6 +142,6 @@ class QdrantVectorStore:
         else:
             body.update(query=vec.dense, using="dense")
         response = await self.client.post(self.path + "/points/query", json=body)
-        return [
-            UUID(point["id"]) for point in response.raise_for_status().json()["result"]["points"]
-        ]
+        points = response.raise_for_status().json()["result"]["points"]
+        points.sort(key=lambda point: (-point["score"], point["id"]))
+        return [UUID(point["id"]) for point in points]
