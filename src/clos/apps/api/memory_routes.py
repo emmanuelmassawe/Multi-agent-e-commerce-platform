@@ -89,7 +89,9 @@ async def export(customer_id: UUID, principal: Auth, repo: Repo) -> dict[str, li
     return await repo.export(principal.tenant_id, customer_id, principal.user_id)
 
 
-@router.delete("/customers/{customer_id}/memory", status_code=202, operation_id="eraseCustomerMemory")
+@router.delete(
+    "/customers/{customer_id}/memory", status_code=202, operation_id="eraseCustomerMemory"
+)
 async def erase(customer_id: UUID, key: Key, principal: Auth, repo: Repo) -> JobBody:
     job = await repo.submit(principal.tenant_id, principal.user_id, key, customer_id)
     return JobBody(run_id=job.id, status=job.status)

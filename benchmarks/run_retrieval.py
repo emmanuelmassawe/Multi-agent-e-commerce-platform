@@ -13,6 +13,7 @@ from datetime import UTC, datetime
 from importlib.metadata import version
 from pathlib import Path
 from time import perf_counter
+from typing import TypedDict
 from uuid import NAMESPACE_URL, uuid4, uuid5
 
 import httpx
@@ -21,7 +22,15 @@ from clos.adapters.qdrant import QdrantVectorStore
 from clos.application.memory import Point
 
 
-async def measure(size: int, queries: int, url: str) -> dict[str, object]:
+class RetrievalResult(TypedDict):
+    points: int
+    eligible_points: int
+    queries_per_mode: int
+    qdrant: str
+    modes: dict[str, dict[str, float]]
+
+
+async def measure(size: int, queries: int, url: str) -> RetrievalResult:
     tenant, foreign, customer = (uuid5(NAMESPACE_URL, "clos-bench:" + x) for x in ("A", "B", "C"))
     name = "clos_benchmark_" + uuid4().hex
     points = []
@@ -69,6 +78,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sizes", nargs="+", type=int, default=[128, 1024])
     parser.add_argument("--queries", type=int, default=32)
+    parser.add_argument("--min-hybrid-recall", type=float, default=0.0)
     args = parser.parse_args()
     if args.queries < 1 or any(s % 2 or s // 2 < args.queries for s in args.sizes):
         parser.error("Each size must be even and allow one distinct query per eligible point")
@@ -100,6 +110,8 @@ def main() -> None:
     path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
     print(path)
     print(json.dumps(results))
+    if any(row["modes"]["hybrid"]["recall_at_5"] < args.min_hybrid_recall for row in results):
+        raise SystemExit("Hybrid recall@5 below the configured synthetic regression threshold")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-20T09:02:43.326045+00:00",
+  "git_sha": "5adda6005e06cb1d3a95ac81ce39cd45befff352",
+  "source_sha256": {
+    "run_retrieval.py": "0f3ed21e07b6dbc2cb66cbe84e621198533fcfc12247507ee95712d4117fe60a",
+    "qdrant.py": "b1b87b9c0d0ce93ffc29bfa546d7539e848325dcbcf18f52cbee71f7cdc1f797",
+    "memory.py": "292d61de67b9a2ff5ecb2be46f9c0dced082934f5e2b1f99bf387159e35bd6bc"
+  },
+  "environment": "Windows-11-10.0.22000-SP0",
+  "cpu": "Intel64 Family 6 Model 142 Stepping 9, GenuineIntel",
+  "cpu_count": 4,
+  "python": "3.12.15",
+  "httpx": "0.28.1",
+  "command": "uv run python benchmarks/run_retrieval.py --sizes 128 --queries 32 --min-hybrid-recall 0.95",
+  "dataset": "Synthetic SKU lookup. One relevant passage per query, two tenants.",
+  "results": [
+    {
+      "points": 128,
+      "eligible_points": 64,
+      "queries_per_mode": 32,
+      "qdrant": "1.12.4",
+      "modes": {
+        "dense": {
+          "p95_ms": 59.21109998598695,
+          "recall_at_5": 1.0
+        },
+        "hybrid": {
+          "p95_ms": 61.12039997242391,
+          "recall_at_5": 1.0
+        }
+      }
+    }
+  ]
+}

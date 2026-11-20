@@ -4,6 +4,12 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     services:
+      rabbitmq:
+        image: rabbitmq:4.0-alpine
+        ports: ["5672:5672"]
+        env:
+          RABBITMQ_DEFAULT_USER: clos
+          RABBITMQ_DEFAULT_PASS: clos
       qdrant:
         image: qdrant/qdrant:v1.12.4
         ports: ["6333:6333"]
@@ -26,6 +32,7 @@ jobs:
       PUPPETEER_SKIP_DOWNLOAD: "true"
       PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
       TEST_MEMORY_SERVICES: "1"
+      TEST_MEMORY_BROKER_URL: amqp://clos:clos@localhost:5672//
       DATABASE_ADMIN_URL: postgresql+asyncpg://clos:local-only-change-me@localhost:5432/clos
       DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
       TEST_DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos
@@ -47,6 +54,7 @@ jobs:
       - run: uv run mypy .
       - run: uv run pytest --cov=clos.domain --cov=clos.application --cov-report=term-missing --cov-fail-under=85
       - run: uv run pytest evals/
+      - run: uv run python benchmarks/run_retrieval.py --sizes 128 --queries 32 --min-hybrid-recall 0.95
       - run: npx --yes @stoplight/spectral-cli lint --ruleset .spectral.yaml docs/api/openapi.yaml
       - run: npx --yes @asyncapi/cli validate docs/api/asyncapi.yaml
       - run: npm install --global @mermaid-js/mermaid-cli

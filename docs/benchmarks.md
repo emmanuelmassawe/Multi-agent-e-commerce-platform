@@ -52,3 +52,5 @@ One local Qdrant 1.12.4 instance ranked synthetic SKU policies from two tenants.
 | 1,024 | 512 | 139.16 | 79.23 | 1.00 / 1.00 |
 
 [Raw results, exact command, code digests and environment](../benchmarks/results/2026-11-19-0927d4fc-retrieval.json). Merchant-language semantic relevance and concurrent production latency remain unmeasured.
+
+CI reruns the 128-point fixture and fails if hybrid recall@5 drops below 0.95. This is a regression guard for seeded SKU lookups. A latency gate needs repeated measurements on a stable runner.

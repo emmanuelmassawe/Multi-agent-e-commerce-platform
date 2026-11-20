@@ -13,3 +13,6 @@ Run schema migrations with `uv run alembic upgrade head` using `DATABASE_ADMIN_U
 
 See `docs/runbooks/local-database.md` for the local database setup and `CODEX_MASTER_PROMPT.md` for the phased implementation plan.
 
+The [customer memory runbook](docs/runbooks/customer-memory.md) covers uploading policies,
+retrieving customer-scoped evidence, erasing private memory, and rebuilding the Qdrant index.
+
