@@ -65,3 +65,6 @@ Target countries and languages, first commerce/carrier integrations, model provi
 - Agent prompts are versioned. Evals use deterministic synthetic data; no real customer data or real LLM evaluation was used. Agent latency and business outcomes are not measured yet.
 - Mermaid source was updated, but local rendering validation remains unavailable because the `mmdc` executable is not installed; CI is configured to render these diagrams.
 
+## Phase 5
+
+The owner's files contain no approved support corpus, embedding provider, residency rule or retention schedule. This phase accepts plain text and uses local lexical features so retrieval sends no personal data to an embedding provider. Only an owner, using a suitably scoped credential, can manage customer memory. A document without a customer ID is an explicitly shared tenant policy. Real merchant-language quality has not been measured.

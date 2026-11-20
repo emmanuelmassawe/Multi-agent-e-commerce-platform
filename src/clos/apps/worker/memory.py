@@ -57,3 +57,14 @@ async def work(tenant: UUID, operation: str) -> dict[str, int]:
 )  # type: ignore[untyped-decorator]
 def memory_job(tenant: str, operation: str) -> dict[str, int]:
     return asyncio.run(work(UUID(tenant), operation))
+
+
+if __name__ == "__main__":
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(description="Inspect and rebuild a tenant memory index")
+    parser.add_argument("operation", choices=["drift", "reindex"])
+    parser.add_argument("tenant", type=UUID)
+    args = parser.parse_args()
+    print(json.dumps(asyncio.run(work(args.tenant, args.operation))))

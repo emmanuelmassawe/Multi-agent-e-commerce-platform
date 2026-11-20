@@ -40,3 +40,15 @@ The owner selected the Gemini free tier as the initial LLM provider. Review Goog
 and data-use terms before sending real merchant/customer data; the phase 2 adapter only redacts
 email, phone-number, and credential-shaped strings and is not sufficient for unrestricted PII.
 
+## Phase 5 memory fields
+
+| Storage | Classification and handling |
+| --- | --- |
+| memory_documents | id, tenant_id, customer_id are linkable identifiers. source and body can contain personal data. created_at and updated_at are operational timestamps. |
+| memory_chunks | id, document_id and tenant_id are linkable. body inherits the source classification. Both timestamps are operational. |
+| memory_jobs | id is a tenant-namespaced receipt, subject_id is a temporary link cleared on completion, fingerprint is a content-derived digest. Treat them as pseudonymous. operation, status and timestamps are operational. |
+| Qdrant | Point ID, tenant_id and customer_id are linkable. Dense/sparse vectors and checksum are derived confidential data. No source text or message body is stored in the payload. |
+| Redis | The namespaced session key identifies tenant/customer. The summary contains personal text and an opaque revision stamp. TTL is 15 minutes. Erasure removes the key. |
+| Audit logs | Export and mutation records retain internal identifiers and timestamps. Drift details contain counts. They exclude message and document text. |
+
+Private export and deletion are documented in the [customer memory runbook](../runbooks/customer-memory.md). No business retention period or backup-erasure policy has been supplied for production.

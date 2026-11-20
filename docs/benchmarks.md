@@ -41,3 +41,14 @@ concurrency, and business outcome rates are **not measured yet**.
 Approval decision latency, dashboard event delivery latency, and interrupt-to-resume latency are
 **not measured yet**. PostgreSQL integration tests validate correctness and checkpoint recovery but
 do not report performance numbers.
+
+## Phase 5 customer-scoped retrieval
+
+One local Qdrant 1.12.4 instance ranked synthetic SKU policies from two tenants. Each mode ran 32 serial queries per size. Each query had one known relevant passage. Times include the HTTP request, local feature extraction and filtering, and exclude PostgreSQL hydration and answer generation.
+
+| Points | Eligible | Dense p95 (ms) | Hybrid p95 (ms) | Dense / hybrid recall@5 |
+| ---: | ---: | ---: | ---: | ---: |
+| 128 | 64 | 99.68 | 91.79 | 1.00 / 1.00 |
+| 1,024 | 512 | 139.16 | 79.23 | 1.00 / 1.00 |
+
+[Raw results, exact command, code digests and environment](../benchmarks/results/2026-11-19-0927d4fc-retrieval.json). Merchant-language semantic relevance and concurrent production latency remain unmeasured.

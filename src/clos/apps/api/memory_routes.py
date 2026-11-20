@@ -13,6 +13,8 @@ from clos.agents.common import AgentContext
 from clos.agents.support import SupportAgent
 from clos.application.auth import AuthorizationError, Principal
 from clos.apps.api.auth_routes import get_principal
+from clos.apps.api.memory_metrics import empty_results, retrieval_seconds
+from clos.domain.identity import role_allows
 
 router = APIRouter(prefix="/v1", tags=["memory"])
 Key = Annotated[str, Header(alias="Idempotency-Key", min_length=1, max_length=200)]
@@ -39,7 +41,7 @@ class JobBody(BaseModel):
 
 
 def authorize(principal: Principal = Depends(get_principal)) -> Principal:
-    if not principal.allows("manage_memory"):
+    if not role_allows(principal.role, "manage_memory") or not principal.allows("manage_memory"):
         raise AuthorizationError("Memory management permission required")
     return principal
 
@@ -63,7 +65,7 @@ Auth = Annotated[Principal, Depends(authorize)]
 Repo = Annotated[MemoryRepository, Depends(get_memory)]
 
 
-@router.post("/memory/documents", status_code=202)
+@router.post("/memory/documents", status_code=202, operation_id="ingestMemoryDocument")
 async def ingest(body: Upload, key: Key, principal: Auth, repo: Repo) -> JobBody:
     job = await repo.submit(
         principal.tenant_id,
@@ -76,24 +78,24 @@ async def ingest(body: Upload, key: Key, principal: Auth, repo: Repo) -> JobBody
     return JobBody(run_id=job.id, status=job.status)
 
 
-@router.get("/memory/jobs/{run_id}")
+@router.get("/memory/jobs/{run_id}", operation_id="getMemoryJob")
 async def job_status(run_id: UUID, principal: Auth, repo: Repo) -> JobBody:
     job = await repo.job(principal.tenant_id, run_id)
     return JobBody(run_id=job.id, status=job.status)
 
 
-@router.get("/customers/{customer_id}/memory")
+@router.get("/customers/{customer_id}/memory", operation_id="exportCustomerMemory")
 async def export(customer_id: UUID, principal: Auth, repo: Repo) -> dict[str, list[dict[str, str]]]:
     return await repo.export(principal.tenant_id, customer_id, principal.user_id)
 
 
-@router.delete("/customers/{customer_id}/memory", status_code=202)
+@router.delete("/customers/{customer_id}/memory", status_code=202, operation_id="eraseCustomerMemory")
 async def erase(customer_id: UUID, key: Key, principal: Auth, repo: Repo) -> JobBody:
     job = await repo.submit(principal.tenant_id, principal.user_id, key, customer_id)
     return JobBody(run_id=job.id, status=job.status)
 
 
-@router.post("/customers/{customer_id}/memory/messages")
+@router.post("/customers/{customer_id}/memory/messages", operation_id="appendMemoryMessage")
 async def append(
     customer_id: UUID, body: MessageBody, key: Key, principal: Auth, repo: Repo
 ) -> dict[str, UUID]:
@@ -103,9 +105,13 @@ async def append(
     return {"message_id": uid}
 
 
-@router.post("/customers/{customer_id}/memory/search")
+@router.post("/customers/{customer_id}/memory/search", operation_id="searchCustomerMemory")
 async def search(customer_id: UUID, body: Query, principal: Auth, repo: Repo) -> dict[str, object]:
     context = AgentContext(principal.tenant_id, uuid4(), customer_id)
     history = await repo.context(context.tenant_id, customer_id)
     query = " ".join(filter(None, [body.query, history[-500:]]))
-    return await SupportAgent(repo).answer_customer(query, context)
+    with retrieval_seconds.time():
+        answer = await SupportAgent(repo).answer_customer(query, context)
+    if not answer["evidence"]:
+        empty_results.inc()
+    return answer

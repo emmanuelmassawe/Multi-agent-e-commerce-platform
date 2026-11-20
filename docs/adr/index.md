@@ -17,4 +17,4 @@
 | [0013](0013-llm-port-fallback.md) | LLM port, Gemini adapter, and key fallback | accepted |
 | [0015](0015-agent-runtime-budget-and-tools.md) | Agent runtime budgets and typed tools | accepted |
 | [0016](0016-phase3-agent-boundaries.md) | Phase 3 agent boundaries and tenant-scoped ports | accepted |
-
+| [0017](0017-memory-projection.md) | Customer memory projection, scoped retrieval and erasure | accepted |

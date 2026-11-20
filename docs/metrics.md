@@ -52,3 +52,7 @@ calls. These figures exclude database checkpoints and queue delivery. Real Gemin
 production agent actions, concurrency, queue throughput, and recovery time are **not measured yet**.
 The local PostgreSQL checkpoint integration test verifies process termination and resume behavior,
 but it does not report recovery performance.
+
+## Phase 5 memory
+
+The API exposes `retrieval_latency_seconds` (support retrieval and hydration), `retrieval_empty_total`, `outbox_lag_seconds` (age of the oldest pending memory job), and `qdrant_drift_total` (audited checks finding a mismatch) at `/metrics`. Scrapes aggregate across tenants and never include customer IDs or content. The two database metrics require a configured database and read each tenant under RLS. The Compose Grafana **Customer memory** dashboard uses the provisioned Prometheus data source.

@@ -1,7 +1,7 @@
 # 0017. Customer memory projection
 
 ## Status
-Proposed for Phase 5. Implements the storage boundary in ADR 0005.
+Accepted for Phase 5. Implements the storage boundary in ADR 0005.
 
 ## Context
 Support needs shared merchant policy and private customer documents. Source text can contain personal data. The owner has not selected a hosted embedding model.
@@ -17,3 +17,7 @@ Use local signed feature hashing and sparse term weights, reciprocal rank fusion
 
 ## Consequences
 Lexical hashing is not a trained semantic model. Reindex into a separately named collection before switching models of different dimensionality. Shared policies are searchable alongside customer-specific passages. Index updates are eventually consistent. Erasure is complete only after all memory stores acknowledge it.
+
+## Evidence
+
+The PostgreSQL/Qdrant/Redis integration test exercises replay, drift repair and erasure. See [the retrieval measurements](../benchmarks.md) and [operator runbook](../runbooks/customer-memory.md).

@@ -14,6 +14,7 @@ from clos.adapters.db.session import make_session_factory
 from clos.application.auth import AuthenticationError, AuthorizationError
 from clos.apps.api.approval_routes import router as approval_router
 from clos.apps.api.auth_routes import router as auth_router
+from clos.apps.api.memory_metrics import router as metrics_router
 from clos.apps.api.memory_routes import router as memory_router
 from clos.config import settings
 from clos.logging import configure_logging
@@ -38,6 +39,7 @@ app = FastAPI(title="CLOS API", version="0.1.0", lifespan=lifespan)
 app.include_router(auth_router)
 app.include_router(approval_router)
 app.include_router(memory_router)
+app.include_router(metrics_router)
 
 
 @app.exception_handler(AuthenticationError)

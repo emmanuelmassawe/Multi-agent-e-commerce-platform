@@ -2,6 +2,8 @@
 
 import asyncio
 import os
+from collections.abc import Awaitable, Callable
+from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
@@ -55,6 +57,21 @@ async def scenario() -> None:
             ]:
                 job = await repo.submit(t, u, body, c, source="fixture", body=body)
                 assert (await repo.submit(t, u, body, c, source="fixture", body=body)).id == job.id
+                if c == alice:
+                    upsert = repo.vectors.upsert
+
+                    async def lose_ack(
+                        points: list[Point],
+                        write: Callable[[list[Point]], Awaitable[None]] = upsert,
+                    ) -> None:
+                        await write(points)
+                        raise ConnectionError("Simulated lost acknowledgement")
+
+                    with patch.object(repo.vectors, "upsert", side_effect=lose_ack):
+                        with pytest.raises(ConnectionError):
+                            await repo.process_next(t)
+                    assert (await repo.job(t, job.id)).status == "pending"
+                    assert not await repo.search(t, alice, "private", limit=5)
                 assert await repo.process_next(t)
                 assert not await repo.process_next(t)
             with pytest.raises(MemoryConflict):

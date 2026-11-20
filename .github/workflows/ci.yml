@@ -23,6 +23,8 @@ jobs:
           --health-timeout 3s
           --health-retries 10
     env:
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
       TEST_MEMORY_SERVICES: "1"
       DATABASE_ADMIN_URL: postgresql+asyncpg://clos:local-only-change-me@localhost:5432/clos
       DATABASE_URL: postgresql+asyncpg://clos_app:local-only-change-me@localhost:5432/clos

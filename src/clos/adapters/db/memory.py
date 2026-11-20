@@ -339,6 +339,19 @@ class MemoryRepository:
             extra = actual.keys() - expected.keys()
             missing = expected.keys() - actual.keys()
             changed = sum(expected[k] != actual[k] for k in expected.keys() & actual.keys())
+            if extra or missing or changed:
+                db.add(
+                    AuditLog(
+                        tenant_id=tenant,
+                        action="memory.drift",
+                        entity_type="index",
+                        details={
+                            "unexpected": len(extra),
+                            "missing": len(missing),
+                            "changed": changed,
+                        },
+                    )
+                )
             if repair:
                 await self.vectors.upsert(points)
                 await self.vectors.remove(tenant, list(extra))

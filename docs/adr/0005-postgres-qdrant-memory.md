@@ -1,6 +1,6 @@
 # 0005. Postgres source of truth with derived Qdrant index
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-18
 
 ## Context
@@ -18,13 +18,13 @@ Data integrity, tenant isolation, deletion/export compliance, retrieval quality,
 
 ## Evidence
 
-The supplied vector-memory rule mandates the first option. Recall and latency are not measured yet.
+The supplied vector-memory rule mandates the first option. See the [Phase 5 retrieval measurements](../benchmarks.md).
 
 ## Decision
 
-Record Postgres plus derived Qdrant as proposed; require outbox sync and reindex capability.
+Keep source text in Postgres and rebuild Qdrant using the outbox and tenant reindex job.
 
 ## Consequences
 
-Phase 5 must implement and test idempotent synchronization and deletion across both stores.
+ADR 0017 specifies the implemented projection and erasure workflow.
 
