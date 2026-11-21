@@ -9,6 +9,29 @@ servers:
     protocol: http
     description: Local development API
 channels:
+  approvalSocket:
+    address: /v1/approvals/ws
+    description: Read-only approvals inbox. Authenticate with a bearer header and optionally resume with Last-Event-ID.
+    messages:
+      approvalEvent: { $ref: '#/components/messages/ApprovalEvent' }
+      heartbeat:
+        payload:
+          type: object
+          required: [type]
+          properties: { type: { type: string, const: heartbeat } }
+  outboundWebhook:
+    address: null
+    description: Tenant-configured HTTPS receiver. Verify X-CLOS-Signature over timestamp, event ID and raw bytes separated by dots. Deduplicate by event ID.
+    messages:
+      notification:
+        payload:
+          type: object
+          required: [event_id, event_type, tenant_id, subject_id]
+          properties:
+            event_id: { type: string, format: uuid }
+            event_type: { type: string }
+            tenant_id: { type: string, format: uuid }
+            subject_id: { type: string, format: uuid }
   runEvents:
     address: /v1/runs/{run_id}/events
     parameters:
@@ -23,6 +46,12 @@ channels:
       approvalEvent:
         $ref: '#/components/messages/ApprovalEvent'
 operations:
+  watchApprovals:
+    action: receive
+    channel: { $ref: '#/channels/approvalSocket' }
+  deliverNotification:
+    action: send
+    channel: { $ref: '#/channels/outboundWebhook' }
   streamRunEvents:
     action: receive
     channel: { $ref: '#/channels/runEvents' }
@@ -52,7 +81,7 @@ components:
       properties:
         event_id: { type: string, format: uuid }
         run_id: { type: string, format: uuid }
-        event_type: { type: string, enum: [run_started, node_started, tool_started, tool_finished, token_usage, run_finished, run_failed] }
+        event_type: { type: string, enum: [run_queued, run_started, node_started, tool_started, tool_finished, token_usage, awaiting_approval, run_finished, run_failed] }
         occurred_at: { type: string, format: date-time }
         data: { type: object, additionalProperties: true }
     ApprovalEvent:

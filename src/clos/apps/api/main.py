@@ -5,15 +5,19 @@ from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from starlette.middleware.base import RequestResponseEndpoint
+from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from clos.adapters.db.session import make_session_factory
+from clos.adapters.quota import RedisRateLimit
 from clos.application.auth import AuthenticationError, AuthorizationError
 from clos.apps.api.approval_routes import router as approval_router
 from clos.apps.api.auth_routes import router as auth_router
+from clos.apps.api.delivery_routes import router as delivery_router
 from clos.apps.api.memory_metrics import router as metrics_router
 from clos.apps.api.memory_routes import router as memory_router
 from clos.config import settings
@@ -24,6 +28,8 @@ configure_logging(settings.log_level)
 
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncIterator[None]:
+    redis=Redis.from_url(settings.redis_url,socket_timeout=2,socket_connect_timeout=2)
+    application.state.limiter=RedisRateLimit(redis,settings.tenant_requests_per_minute,settings.user_requests_per_minute)
     factory: async_sessionmaker[AsyncSession] | None = None
     if settings.database_url is not None:
         factory = make_session_factory(settings.database_url)
@@ -31,6 +37,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     try:
         yield
     finally:
+        await redis.aclose()
         if factory is not None:
             await factory.kw["bind"].dispose()
 
@@ -40,6 +47,17 @@ app.include_router(auth_router)
 app.include_router(approval_router)
 app.include_router(memory_router)
 app.include_router(metrics_router)
+app.include_router(delivery_router)
+
+
+@app.middleware("http")
+async def response_headers(request: Request, call_next: RequestResponseEndpoint) -> Response:
+    request.state.trace_id=str(uuid4())
+    response=await call_next(request)
+    response.headers.update(getattr(request.state,"rate_headers",{}))
+    response.headers["X-Request-ID"]=request.state.trace_id
+    response.headers["X-Trace-ID"]=request.state.trace_id
+    return response
 
 
 @app.exception_handler(AuthenticationError)

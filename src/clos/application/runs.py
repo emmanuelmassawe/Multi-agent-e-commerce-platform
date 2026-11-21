@@ -34,6 +34,8 @@ async def execute_supervisor_run(
     run_id: UUID,
     message: str,
     resume: dict[str, object] | None = None,
+    recover: bool = False,
+    saved_result: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Start or resume a graph and persist final status plus token usage."""
     await repository.start(tenant_id, run_id)
@@ -47,7 +49,8 @@ async def execute_supervisor_run(
         "usage_records": [],
     }
     graph_input: object = Command(resume=resume) if resume is not None else initial_state
-    result = await graph.ainvoke(graph_input, checkpoint_config(tenant_id, run_id))
+    result = saved_result if saved_result is not None else await graph.ainvoke(
+        None if recover else graph_input, checkpoint_config(tenant_id, run_id))
     interrupts = result.get("__interrupt__", ())
     interrupt_payload = None
     if interrupts:

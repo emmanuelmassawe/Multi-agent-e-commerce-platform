@@ -19,6 +19,7 @@ from clos.application.auth import (
     TokenPair,
 )
 from clos.config import settings
+from clos.apps.api.limits import enforce
 
 router = APIRouter(prefix="/v1", tags=["authentication"])
 
@@ -72,7 +73,7 @@ async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
         yield session
 
 
-def get_auth_service(session: AsyncSession = Depends(get_session)) -> AuthService:
+def get_auth_service(session: AsyncSession = Depends(get_session,scope="function")) -> AuthService:
     if settings.auth_jwt_secret is None:
         raise HTTPException(status_code=503, detail="Authentication is not configured")
     issuer = JwtTokenIssuer(settings.auth_jwt_secret.get_secret_value())
@@ -86,9 +87,16 @@ def get_auth_service(session: AsyncSession = Depends(get_session)) -> AuthServic
 
 
 async def get_principal(
+    request: Request,
     authorization: str | None = Header(default=None),
     service: AuthService = Depends(get_auth_service),
 ) -> Principal:
+    principal=await authenticate(authorization,service)
+    await enforce(request,principal.tenant_id,str(principal.user_id))
+    return principal
+
+
+async def authenticate(authorization: str | None, service: AuthService) -> Principal:
     if authorization is None or not authorization.lower().startswith("bearer "):
         raise AuthenticationError("Missing bearer credentials")
     token = authorization[7:].strip()

@@ -14,6 +14,7 @@ from langgraph.types import Send
 from clos.agents.budgets import BudgetLimits
 from clos.agents.common import AgentContext, AgentRunner
 from clos.application.llm import LLMPort, LLMRequest
+from clos.application.delivery import emit
 
 AGENTS = frozenset({"inventory", "pricing", "logistics", "support"})
 
@@ -93,6 +94,7 @@ def build_supervisor_graph(
     builder = StateGraph(SupervisorState)
 
     async def classify(state: SupervisorState) -> dict[str, object]:
+        await emit("node_started",node="classify")
         started_at = state.get("started_at", time.time())
         elapsed = time.time() - started_at
         if elapsed >= budget.max_wall_seconds:
@@ -122,6 +124,7 @@ def build_supervisor_graph(
             )
         except TimeoutError:
             return _budget_stop("wall-clock", started_at)
+        await emit("token_usage",node="classify",model=response.model,input_tokens=response.input_tokens,output_tokens=response.output_tokens)
         routes = [route.strip() for route in response.text.split(",") if route.strip()]
         selected = list(dict.fromkeys(route for route in routes if route in AGENTS))
         if not selected:
@@ -179,6 +182,7 @@ def build_supervisor_graph(
         ]
 
     async def dispatch(state: DispatchState) -> dict[str, object]:
+        await emit("node_started",node="dispatch",agent=state["agent"])
         agent = state["agent"]
         runner = (agent_runners or {}).get(agent)
         if runner is not None:
@@ -198,6 +202,7 @@ def build_supervisor_graph(
         }
 
     async def aggregate(state: SupervisorState) -> dict[str, object]:
+        await emit("node_started",node="aggregate")
         started_at = state.get("started_at", time.monotonic())
         elapsed = time.time() - started_at
         remaining = budget.max_tokens - state.get("tokens", 0)
@@ -227,6 +232,7 @@ def build_supervisor_graph(
             )
         except TimeoutError:
             return _budget_stop("wall-clock", started_at)
+        await emit("token_usage",node="aggregate",model=response.model,input_tokens=response.input_tokens,output_tokens=response.output_tokens)
         actual_tokens = response.input_tokens + response.output_tokens
         if actual_tokens > remaining:
             stopped = _budget_stop("token", started_at)

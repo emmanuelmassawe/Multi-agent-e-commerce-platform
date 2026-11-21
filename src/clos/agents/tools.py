@@ -13,6 +13,7 @@ from pydantic import BaseModel, ValidationError
 
 from clos.agents.budgets import BudgetEnforcer
 from clos.domain.identity import AutonomyMode, RiskLevel, may_execute_write
+from clos.application.delivery import emit
 
 
 class ToolError(RuntimeError):
@@ -196,15 +197,20 @@ class ToolRegistry:
                 try:
                     if rejected_approval_id is not None:
                         return {"status": "rejected", "approval_id": str(rejected_approval_id)}
-                    return await asyncio.wait_for(
+                    await emit("tool_started",tool=name,attempt=attempt+1)
+                    result=await asyncio.wait_for(
                         spec.handler(parsed, execution_context),
                         timeout=min(spec.timeout_seconds, remaining),
                     )
                 except Exception:
+                    await emit("tool_finished",tool=name,attempt=attempt+1,outcome="error")
                     if attempt == spec.max_retries:
                         raise
                     ceiling = self._retry_base_seconds * (2**attempt)
                     await self._sleep(max(0.0, self._jitter(0.0, ceiling)))
+                else:
+                    await emit("tool_finished",tool=name,attempt=attempt+1,outcome="success")
+                    return result
             raise AssertionError("Retry loop exited unexpectedly")
 
         return await self._idempotency.run_once(

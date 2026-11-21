@@ -8,6 +8,8 @@ from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from clos.adapters.db.models import AgentRun, TokenUsage
+from clos.adapters.db.delivery import append_event, enqueue
+from clos.config import settings
 from clos.adapters.db.session import tenant_session
 from clos.agents.supervisor.graph import UsageRecord
 
@@ -50,6 +52,8 @@ class SQLAgentRunRepository:
                 )
             else:
                 run.status = "running"
+            await session.flush()
+            await append_event(session,tenant_id,run_id,"run_started",{})
 
     async def finish(
         self,
@@ -69,6 +73,11 @@ class SQLAgentRunRepository:
                 raise AgentRunNotFound("Agent run not found in tenant scope")
             run.status = status
             run.explanation = explanation
+            event = {"completed":"run_finished","awaiting_approval":"awaiting_approval"}.get(status,"run_failed")
+            await append_event(session,tenant_id,run_id,event,{"status":status})
+            binding=settings.integrations.get(tenant_id)
+            if binding and binding.outbound_url:
+                await enqueue(session,tenant_id,"outbound",f"{run_id}:{event}",{"subject_id":str(run_id),"event_type":event})
             await session.execute(
                 delete(TokenUsage).where(
                     TokenUsage.tenant_id == tenant_id,

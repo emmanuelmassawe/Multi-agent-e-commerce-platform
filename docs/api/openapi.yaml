@@ -6,6 +6,101 @@ info:
 servers:
   - url: /v1
 paths:
+  /runs:
+    post:
+      operationId: createRun
+      summary: Queue a tenant-scoped supervisor run
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string, minLength: 1, maxLength: 8000 }
+      responses:
+        '202':
+          description: Run accepted or original receipt returned
+          headers:
+            Location: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { type: object, required: [run_id], properties: { run_id: { type: string, format: uuid } } }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/Throttled' }
+  /runs/{run_id}:
+    get:
+      operationId: getRun
+      summary: Get run status and final response
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: run_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Tenant-owned run
+          content:
+            application/json:
+              schema: { type: object, required: [run_id, status, response] }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /runs/{run_id}/events:
+    get:
+      operationId: streamRunEvents
+      summary: Follow persisted run events until a terminal event
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: run_id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: Last-Event-ID, in: header, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: SSE with event ID, name and AsyncAPI RunEvent data
+          content: { text/event-stream: { schema: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /dead-letters:
+    get:
+      operationId: listDeadLetters
+      summary: List exhausted jobs for the authenticated tenant
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: cursor, in: query, schema: { type: string, format: uuid } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100 } }
+      responses:
+        '200': { description: Page of job identifiers, failure categories and attempt counts }
+  /dead-letters/{job_id}/replays:
+    post:
+      operationId: replayDeadLetter
+      summary: Requeue an exhausted job
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: job_id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      responses:
+        '202': { description: Original job queued for retry }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /webhooks/{tenant_id}/{source}:
+    post:
+      operationId: receiveIntegrationWebhook
+      summary: Accept a signed Shopify orders/create or carrier tracking event
+      parameters:
+        - { name: tenant_id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: source, in: path, required: true, schema: { type: string, enum: [shopify, carrier] } }
+        - { name: X-Shopify-Hmac-Sha256, in: header, schema: { type: string } }
+        - { name: X-Shopify-Webhook-Id, in: header, schema: { type: string } }
+        - { name: X-Shopify-Topic, in: header, schema: { type: string } }
+        - { name: X-CLOS-Signature, in: header, schema: { type: string } }
+        - { name: X-CLOS-Timestamp, in: header, schema: { type: integer } }
+        - { name: X-CLOS-Event-Id, in: header, schema: { type: string } }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        '202': { description: Verified event queued with durable job_id }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/Throttled' }
   /memory/documents:
     post:
       operationId: ingestMemoryDocument
@@ -341,6 +436,14 @@ components:
       required: true
       schema: { type: string, minLength: 1, maxLength: 200 }
   responses:
+    Throttled:
+      description: Per-user or per-tenant request quota reached
+      headers:
+        Retry-After: { schema: { type: integer } }
+        RateLimit-Limit: { schema: { type: integer } }
+        RateLimit-Remaining: { schema: { type: integer } }
+        RateLimit-Reset: { schema: { type: integer } }
+      content: { application/problem+json: { schema: { $ref: '#/components/schemas/Problem' } } }
     MemoryAccepted:
       description: Memory job identity and durable processing status
       content:

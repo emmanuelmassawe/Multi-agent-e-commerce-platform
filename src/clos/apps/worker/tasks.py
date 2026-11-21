@@ -13,7 +13,9 @@ from clos.adapters.db.approvals import SQLApprovalWorkflow
 from clos.adapters.db.session import make_session_factory
 from clos.adapters.llm.factory import build_worker_llm
 from clos.adapters.notifications import AuditStreamNotifier
-from clos.agents.supervisor.graph import build_supervisor_graph
+from clos.agents.supervisor.graph import build_supervisor_graph, checkpoint_config
+from clos.adapters.db.delivery import Journal
+from clos.application.delivery import events
 from clos.application.approvals import ApprovalItem, ApprovalService
 from clos.application.runs import execute_supervisor_run
 from clos.apps.worker.main import celery_app
@@ -29,19 +31,29 @@ async def _execute(tenant_id: UUID, run_id: UUID, message: str) -> dict[str, obj
         raise RuntimeError("DATABASE_URL is required by the agent worker")
     llm = build_worker_llm(settings)
     factory = make_session_factory(settings.database_url)
+    token=events.set(Journal(factory,tenant_id,run_id).emit)
     try:
         async with AsyncPostgresSaver.from_conn_string(
             _psycopg_url(settings.database_url)
         ) as saver:
             graph = build_supervisor_graph(llm, checkpointer=saver)
+            snapshot=await graph.aget_state(checkpoint_config(tenant_id,run_id))
+            saved=None
+            if snapshot.values and (not snapshot.next or snapshot.interrupts):
+                saved=dict(snapshot.values)
+                if snapshot.interrupts:
+                    saved["__interrupt__"]=snapshot.interrupts
             return await execute_supervisor_run(
                 graph,
                 SQLAgentRunRepository(factory),
                 tenant_id=tenant_id,
                 run_id=run_id,
                 message=message,
+                recover=bool(snapshot.values),
+                saved_result=saved,
             )
     finally:
+        events.reset(token)
         close = getattr(llm, "aclose", None)
         if close is not None:
             await close()
@@ -66,6 +78,7 @@ async def _resume(tenant_id: UUID, run_id: UUID, decision: dict[str, object]) ->
         raise RuntimeError("DATABASE_URL is required by the agent worker")
     llm = build_worker_llm(settings)
     factory = make_session_factory(settings.database_url)
+    token=events.set(Journal(factory,tenant_id,run_id).emit)
     try:
         async with AsyncPostgresSaver.from_conn_string(
             _psycopg_url(settings.database_url)
@@ -80,6 +93,7 @@ async def _resume(tenant_id: UUID, run_id: UUID, decision: dict[str, object]) ->
                 resume=decision,
             )
     finally:
+        events.reset(token)
         close = getattr(llm, "aclose", None)
         if close is not None:
             await close()
