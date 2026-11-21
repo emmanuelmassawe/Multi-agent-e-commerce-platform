@@ -1,4 +1,6 @@
 """Atomic, bounded Redis counters for authenticated tenant and actor quotas."""
+
+from collections.abc import Awaitable
 from dataclasses import dataclass
 from typing import Protocol, cast
 from uuid import UUID
@@ -32,23 +34,36 @@ class Quota:
     remaining: int
     reset: int
 
-    def headers(self) -> dict[str,str]:
-        return {"RateLimit-Limit":str(self.limit),"RateLimit-Remaining":str(self.remaining),
-                "RateLimit-Reset":str(self.reset)}
+    def headers(self) -> dict[str, str]:
+        return {
+            "RateLimit-Limit": str(self.limit),
+            "RateLimit-Remaining": str(self.remaining),
+            "RateLimit-Reset": str(self.reset),
+        }
 
 
 class RateLimitPort(Protocol):
-    async def take(self,tenant: UUID,actor: str) -> Quota: ...
+    async def take(self, tenant: UUID, actor: str) -> Quota: ...
 
 
 class RedisRateLimit:
-    def __init__(self,redis: Redis,tenant_limit: int,user_limit: int) -> None:
-        self.redis=redis
-        self.tenant_limit=tenant_limit
-        self.user_limit=user_limit
+    def __init__(self, redis: Redis, tenant_limit: int, user_limit: int) -> None:
+        self.redis = redis
+        self.tenant_limit = tenant_limit
+        self.user_limit = user_limit
 
-    async def take(self,tenant: UUID,actor: str) -> Quota:
-        prefix=f"clos:quota:{{{tenant}}}"
-        raw=await self.redis.eval(_SCRIPT,2,prefix,prefix+":"+actor,self.tenant_limit,self.user_limit)
-        allowed,limit,remaining,reset=cast(list[int],raw)
-        return Quota(bool(allowed),limit,remaining,reset)
+    async def take(self, tenant: UUID, actor: str) -> Quota:
+        prefix = f"clos:quota:{{{tenant}}}"
+        raw = await cast(
+            Awaitable[object],
+            self.redis.eval(
+                _SCRIPT,
+                2,
+                prefix,
+                prefix + ":" + actor,
+                str(self.tenant_limit),
+                str(self.user_limit),
+            ),
+        )
+        allowed, limit, remaining, reset = cast(list[int], raw)
+        return Quota(bool(allowed), limit, remaining, reset)

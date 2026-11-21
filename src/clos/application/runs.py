@@ -49,8 +49,13 @@ async def execute_supervisor_run(
         "usage_records": [],
     }
     graph_input: object = Command(resume=resume) if resume is not None else initial_state
-    result = saved_result if saved_result is not None else await graph.ainvoke(
-        None if recover else graph_input, checkpoint_config(tenant_id, run_id))
+    result = (
+        saved_result
+        if saved_result is not None
+        else await graph.ainvoke(
+            None if recover else graph_input, checkpoint_config(tenant_id, run_id)
+        )
+    )
     interrupts = result.get("__interrupt__", ())
     interrupt_payload = None
     if interrupts:

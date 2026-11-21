@@ -356,23 +356,25 @@ class MemoryJob(TenantScoped, Base):
 class AsyncJob(TenantScoped, Base):
     __tablename__ = "async_jobs"
     __table_args__ = (
-        UniqueConstraint("tenant_id","kind","request_key",name="uq_async_job_key"),
-        Index("ix_async_job_due","tenant_id","status","available_at"),
+        UniqueConstraint("tenant_id", "kind", "request_key", name="uq_async_job_key"),
+        Index("ix_async_job_due", "tenant_id", "status", "available_at"),
     )
     kind: Mapped[str] = mapped_column(String(32))
     request_key: Mapped[str] = mapped_column(String(64))
     fingerprint: Mapped[str] = mapped_column(String(64))
     payload: Mapped[dict[str, Any]] = mapped_column(JSON)
-    status: Mapped[str] = mapped_column(String(16),default="pending")
-    attempts: Mapped[int] = mapped_column(Integer,default=0)
-    available_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),default=utc_now)
+    status: Mapped[str] = mapped_column(String(16), default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    available_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
     error_code: Mapped[str | None] = mapped_column(String(80))
 
 
 class RunEvent(TenantScoped, Base):
     __tablename__ = "run_events"
-    __table_args__ = (UniqueConstraint("tenant_id","run_id","position",name="uq_run_event_position"),)
-    run_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("agent_runs.id",ondelete="CASCADE"))
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "run_id", "position", name="uq_run_event_position"),
+    )
+    run_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("agent_runs.id", ondelete="CASCADE"))
     position: Mapped[int] = mapped_column(Integer)
     event_type: Mapped[str] = mapped_column(String(40))
     data: Mapped[dict[str, Any]] = mapped_column(JSON)

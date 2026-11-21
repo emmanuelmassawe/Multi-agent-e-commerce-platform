@@ -6,11 +6,11 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
-from starlette.middleware.base import RequestResponseEndpoint
 from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from starlette.middleware.base import RequestResponseEndpoint
 
 from clos.adapters.db.session import make_session_factory
 from clos.adapters.quota import RedisRateLimit
@@ -28,8 +28,10 @@ configure_logging(settings.log_level)
 
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-    redis=Redis.from_url(settings.redis_url,socket_timeout=2,socket_connect_timeout=2)
-    application.state.limiter=RedisRateLimit(redis,settings.tenant_requests_per_minute,settings.user_requests_per_minute)
+    redis = Redis.from_url(settings.redis_url, socket_timeout=2, socket_connect_timeout=2)
+    application.state.limiter = RedisRateLimit(
+        redis, settings.tenant_requests_per_minute, settings.user_requests_per_minute
+    )
     factory: async_sessionmaker[AsyncSession] | None = None
     if settings.database_url is not None:
         factory = make_session_factory(settings.database_url)
@@ -52,16 +54,16 @@ app.include_router(delivery_router)
 
 @app.middleware("http")
 async def response_headers(request: Request, call_next: RequestResponseEndpoint) -> Response:
-    request.state.trace_id=str(uuid4())
-    response=await call_next(request)
-    response.headers.update(getattr(request.state,"rate_headers",{}))
-    response.headers["X-Request-ID"]=request.state.trace_id
-    response.headers["X-Trace-ID"]=request.state.trace_id
+    request.state.trace_id = str(uuid4())
+    response = await call_next(request)
+    response.headers.update(getattr(request.state, "rate_headers", {}))
+    response.headers["X-Request-ID"] = request.state.trace_id
+    response.headers["X-Trace-ID"] = request.state.trace_id
     return response
 
 
 @app.exception_handler(AuthenticationError)
-async def authentication_error_handler(_: Request, exc: AuthenticationError) -> JSONResponse:
+async def authentication_error_handler(request: Request, exc: AuthenticationError) -> JSONResponse:
     return JSONResponse(
         status_code=401,
         media_type="application/problem+json",
@@ -71,13 +73,13 @@ async def authentication_error_handler(_: Request, exc: AuthenticationError) -> 
             "status": 401,
             "detail": str(exc),
             "code": "AUTHENTICATION_FAILED",
-            "trace_id": str(uuid4()),
+            "trace_id": request.state.trace_id,
         },
     )
 
 
 @app.exception_handler(AuthorizationError)
-async def authorization_error_handler(_: Request, exc: AuthorizationError) -> JSONResponse:
+async def authorization_error_handler(request: Request, exc: AuthorizationError) -> JSONResponse:
     return JSONResponse(
         status_code=403,
         media_type="application/problem+json",
@@ -87,13 +89,13 @@ async def authorization_error_handler(_: Request, exc: AuthorizationError) -> JS
             "status": 403,
             "detail": str(exc),
             "code": "FORBIDDEN",
-            "trace_id": str(uuid4()),
+            "trace_id": request.state.trace_id,
         },
     )
 
 
 @app.exception_handler(HTTPException)
-async def http_problem_handler(_: Request, exc: HTTPException) -> JSONResponse:
+async def http_problem_handler(request: Request, exc: HTTPException) -> JSONResponse:
     codes = {
         400: "BAD_REQUEST",
         401: "UNAUTHORIZED",
@@ -114,7 +116,7 @@ async def http_problem_handler(_: Request, exc: HTTPException) -> JSONResponse:
             "status": exc.status_code,
             "detail": str(exc.detail),
             "code": codes.get(exc.status_code, "REQUEST_FAILED"),
-            "trace_id": str(uuid4()),
+            "trace_id": request.state.trace_id,
         },
     )
 
