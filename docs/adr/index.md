@@ -18,3 +18,4 @@
 | [0015](0015-agent-runtime-budget-and-tools.md) | Agent runtime budgets and typed tools | accepted |
 | [0016](0016-phase3-agent-boundaries.md) | Phase 3 agent boundaries and tenant-scoped ports | accepted |
 | [0017](0017-memory-projection.md) | Customer memory projection, scoped retrieval and erasure | accepted |
+| [0018](0018-async-delivery.md) | Durable asynchronous delivery and run journal | proposed |

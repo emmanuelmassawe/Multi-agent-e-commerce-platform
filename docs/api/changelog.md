@@ -10,3 +10,7 @@
 ## Phase 5
 
 Added owner-scoped plain text ingestion, memory job status, support message append and search, and customer memory export/erasure. Ingestion and erasure return 202 and a durable receipt.
+
+## Phase 6
+
+Added idempotent run admission, status and resumable SSE, a read-only approval WebSocket, signed integration webhook ingestion, tenant-owner dead-letter listing and replay. Protected routes return quota headers. See the [delivery runbook](../runbooks/async-delivery.md).

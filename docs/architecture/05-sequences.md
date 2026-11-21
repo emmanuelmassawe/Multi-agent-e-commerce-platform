@@ -11,12 +11,16 @@ sequenceDiagram
   participant DB as Postgres
   M->>API: POST /v1/runs
   API->>DB: persist run and outbox event
-  API->>Q: enqueue run_id
   API-->>M: 202 Accepted + run_id
+  participant B as Beat dispatcher
+  B->>DB: find tenants with pending jobs
+  B->>Q: dispatch tenant drain
   Q->>W: deliver task
+  W->>DB: claim oldest available job under tenant scope
   W->>DB: checkpoint state and events
   M->>API: GET /v1/runs/{id}/events
-  API-->>M: SSE run events
+  API->>DB: read journal after Last-Event-ID
+  API-->>M: SSE nodes, tool events and token usage
 ```
 
 ## HITL approval and resume
@@ -29,7 +33,7 @@ sequenceDiagram
   participant DB as Postgres checkpoint
   G->>A: request write_high approval with tool input and diff
   A->>DB: persist request, expiry, and audit record idempotently
-  A-->>H: notify through tenant-scoped dashboard SSE
+  A-->>H: notify through tenant-scoped SSE or WebSocket
   G->>DB: checkpoint and interrupt
   H->>A: approve / reject / modify and approve
   A->>DB: persist decision and audit record
@@ -133,3 +137,27 @@ Phase 2 validates recovery by interrupting after the classification checkpoint, 
 worker subprocess, starting a replacement process, and resuming the same tenant/run thread from
 PostgreSQL. Recovery latency is not measured yet.
 
+## Signed notifications and replay
+
+```mermaid
+sequenceDiagram
+  participant P as Provider
+  participant A as API
+  participant D as Postgres
+  participant W as Delivery worker
+  participant S as Subscriber
+  actor O as Tenant owner
+  P->>A: signed event
+  A->>A: verify raw bytes and tenant credential
+  A->>D: persist minimized idempotent command
+  A-->>P: 202 and job ID
+  W->>D: claim command and commit domain update with outbound job
+  W->>S: signed notification with stable event ID
+  alt acknowledged
+    W->>D: mark delivered
+  else retry limit reached
+    W->>D: record dead letter and audit
+    O->>A: replay job with idempotency key
+    A->>D: requeue original job and audit actor
+  end
+```

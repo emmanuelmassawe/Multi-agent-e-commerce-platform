@@ -27,6 +27,9 @@ paths:
           description: Run accepted or original receipt returned
           headers:
             Location: { schema: { type: string } }
+            RateLimit-Limit: { schema: { type: integer } }
+            RateLimit-Remaining: { schema: { type: integer } }
+            RateLimit-Reset: { schema: { type: integer } }
           content:
             application/json:
               schema: { type: object, required: [run_id], properties: { run_id: { type: string, format: uuid } } }
@@ -68,7 +71,25 @@ paths:
         - { name: cursor, in: query, schema: { type: string, format: uuid } }
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100 } }
       responses:
-        '200': { description: Page of job identifiers, failure categories and attempt counts }
+        '200':
+          description: Tenant-scoped page of dead letters
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  next_cursor: { type: [string, 'null'], format: uuid }
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [job_id, kind, attempts, error_code]
+                      properties:
+                        job_id: { type: string, format: uuid }
+                        kind: { type: string }
+                        attempts: { type: integer, minimum: 1 }
+                        error_code: { type: [string, 'null'] }
   /dead-letters/{job_id}/replays:
     post:
       operationId: replayDeadLetter
@@ -78,7 +99,7 @@ paths:
         - { name: job_id, in: path, required: true, schema: { type: string, format: uuid } }
         - { $ref: '#/components/parameters/IdempotencyKey' }
       responses:
-        '202': { description: Original job queued for retry }
+        '202': { $ref: '#/components/responses/DeliveryAccepted' }
         '409': { $ref: '#/components/responses/Conflict' }
   /webhooks/{tenant_id}/{source}:
     post:
@@ -97,7 +118,7 @@ paths:
         required: true
         content: { application/json: { schema: { type: object } } }
       responses:
-        '202': { description: Verified event queued with durable job_id }
+        '202': { $ref: '#/components/responses/DeliveryAccepted' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '409': { $ref: '#/components/responses/Conflict' }
         '429': { $ref: '#/components/responses/Throttled' }
@@ -444,6 +465,11 @@ components:
         RateLimit-Remaining: { schema: { type: integer } }
         RateLimit-Reset: { schema: { type: integer } }
       content: { application/problem+json: { schema: { $ref: '#/components/schemas/Problem' } } }
+    DeliveryAccepted:
+      description: Durable delivery job receipt
+      content:
+        application/json:
+          schema: { type: object, required: [job_id], properties: { job_id: { type: string, format: uuid } } }
     MemoryAccepted:
       description: Memory job identity and durable processing status
       content:

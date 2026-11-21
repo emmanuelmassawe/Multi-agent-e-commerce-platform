@@ -11,7 +11,7 @@ servers:
 channels:
   approvalSocket:
     address: /v1/approvals/ws
-    description: Read-only approvals inbox. Authenticate with a bearer header and optionally resume with Last-Event-ID.
+    description: Read-only approvals inbox. Authenticate via bearer header or first text frame. Resume with Last-Event-ID or the cursor query parameter.
     messages:
       approvalEvent: { $ref: '#/components/messages/ApprovalEvent' }
       heartbeat:

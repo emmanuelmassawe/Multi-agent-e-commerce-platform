@@ -1,7 +1,7 @@
 # 0018. Asynchronous runs and integration delivery
 
 ## Status
-Proposed for Phase 6.
+Proposed for owner review.
 
 ## Context and decision drivers
 A broker outage between a database commit and publish must not lose an accepted request. Clients reconnect to streams and providers redeliver notifications. Only credentials or per-tenant integration secrets establish scope.
@@ -14,3 +14,6 @@ Persist each command with an idempotency fingerprint in the same transaction as 
 
 ## Consequences
 A worker uses one transaction while processing a job. Bound the operation time and cap delivery batches. Recovery resumes from LangGraph checkpoints. No arbitrary destination URL is accepted from API callers.
+
+## Verification
+Concurrent submissions sharing a key returned one run and generated one tool call through a RabbitMQ-backed worker. Integration tests also cover bad signatures, idempotent owner replay, signed outbound receipts and duplicate schedule ticks. See the [delivery tests](../../tests/integration/test_async_delivery.py) and the [local HTTP load measurement](../benchmarks.md#phase-6-run-admission).

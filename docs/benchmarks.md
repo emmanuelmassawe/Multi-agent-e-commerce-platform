@@ -56,3 +56,13 @@ One local Qdrant 1.12.4 instance ranked synthetic SKU policies from two tenants.
 CI reruns the 128-point fixture and fails if hybrid recall@5 drops below 0.95. This is a regression guard for seeded SKU lookups. A latency gate needs repeated measurements on a stable runner.
 
 The [November 20 rerun](../benchmarks/results/2026-11-20-d6d95d82-retrieval.json) used a positive sparse score threshold and a stable ordering for equal scores. Hybrid recall@5 was 1.00 for both sizes. Hybrid p95 was 57.16 ms at 128 points and 73.14 ms at 1,024 points. Each mode ran 32 queries per size.
+
+## Phase 6 run admission
+
+Locust submitted unique synthetic inventory requests over HTTP to one local Uvicorn process, using one authenticated tenant and four concurrent virtual users. Redis enforced quotas and PostgreSQL committed each run and its outbox job before acknowledgement. The worker was excluded from this measurement.
+
+| Requests | Errors | Requests/s | p50 | p95 | p99 |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 65 | 0 | 7.04 | 350 ms | 2,600 ms | 3,100 ms |
+
+Reproduce with a migrated `TEST_DATABASE_URL`, a local Redis instance and `uv run --locked python benchmarks/run_api_load.py --users 4 --seconds 15`. Run this against a dedicated database with other workers stopped. CI fails if any measured admission fails or no requests complete. Latency and throughput targets require a stated workload and repeated measurements on the deployment hardware. The local sample records acceptance latency only. [Raw Locust statistics, environment and source revision](../benchmarks/results/2026-11-21T103822Z-80869dde-api.json).

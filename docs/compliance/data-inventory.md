@@ -52,3 +52,7 @@ email, phone-number, and credential-shaped strings and is not sufficient for unr
 | Audit logs | Export and mutation records retain internal identifiers and timestamps. Drift details contain counts. They exclude message and document text. |
 
 Private export and deletion are documented in the [customer memory runbook](../runbooks/customer-memory.md). No business retention period or backup-erasure policy has been supplied for production.
+
+## Async delivery
+
+Async jobs include tenant and actor identifiers, hashed idempotency keys, input fingerprints, retry state and minimized payloads. A pending or dead run can contain merchant-entered personal data in its message. Completed jobs clear their payloads. Run events contain tenant and run identifiers, timestamps, node/tool names and model usage counts. Webhooks discard unused Shopify fields before persistence. Audit observations can link orders or shipments to a customer. Apply access and retention controls to dead letters, the journal, audits, graph checkpoints and backups. Automated retention for these records is pending.

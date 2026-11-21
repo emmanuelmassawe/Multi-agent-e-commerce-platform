@@ -68,3 +68,7 @@ Target countries and languages, first commerce/carrier integrations, model provi
 ## Phase 5
 
 The owner's files contain no approved support corpus, embedding provider, residency rule or retention schedule. This phase accepts plain text and uses local lexical features so retrieval sends no personal data to an embedding provider. Only an owner, using a suitably scoped credential, can manage customer memory. A document without a customer ID is an explicitly shared tenant policy. Real merchant-language quality has not been measured.
+
+## Phase 6 integration settings
+
+The owner templates specify no feed URLs, per-tenant signing credentials, polling intervals or merchant quota targets. Each feed and schedule starts disabled. The generic carrier and polling formats are operator-configured adapters. Shopify currently requires a dedicated signing secret for each tenant. The initial quotas and retry limits are configurable engineering defaults. See the [operator runbook](runbooks/async-delivery.md).

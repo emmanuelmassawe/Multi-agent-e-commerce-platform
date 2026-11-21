@@ -1,0 +1,33 @@
+{
+  "uid": "clos-delivery",
+  "title": "Async delivery",
+  "schemaVersion": 39,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Pending jobs and dead letters",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "clos-prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "delivery_jobs",
+          "legendFormat": "{{status}}"
+        }
+      ]
+    }
+  ]
+}

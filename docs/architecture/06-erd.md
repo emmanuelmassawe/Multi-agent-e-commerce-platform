@@ -48,6 +48,9 @@ erDiagram
   TENANT ||--o{ MEMORY_DOCUMENT : owns
   MEMORY_DOCUMENT ||--o{ MEMORY_CHUNK : contains
   TENANT ||--o{ MEMORY_JOB : schedules
+  TENANT ||--o{ ASYNC_JOB : schedules
+  TENANT ||--o{ RUN_EVENT : owns
+  AGENT_RUN ||--o{ RUN_EVENT : emits
   TENANT {
     uuid id PK
     string slug UK
