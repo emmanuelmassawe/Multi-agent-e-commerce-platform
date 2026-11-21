@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from redis.asyncio import Redis
 from sqlalchemy import text
@@ -94,6 +95,13 @@ async def authorization_error_handler(request: Request, exc: AuthorizationError)
     )
 
 
+@app.exception_handler(RequestValidationError)
+async def invalid_request(request: Request, exc: RequestValidationError) -> JSONResponse:
+    return await http_problem_handler(
+        request, HTTPException(422, "Invalid request parameters or body")
+    )
+
+
 @app.exception_handler(HTTPException)
 async def http_problem_handler(request: Request, exc: HTTPException) -> JSONResponse:
     codes = {
@@ -139,6 +147,6 @@ async def ready(request: Request) -> dict[str, str]:
         try:
             async with factory() as session:
                 await session.execute(text("SELECT 1"))
-        except SQLAlchemyError as exc:
+        except (SQLAlchemyError, OSError) as exc:
             raise HTTPException(status_code=503, detail="Database is not ready") from exc
     return {"status": "ready"}

@@ -55,6 +55,10 @@ class Settings(BaseSettings):
                             "Integration secrets must be distinct and at least 16 characters"
                         )
                     seen.add(secret)
+            if binding.pricing_interval_seconds and not binding.price_feed_url:
+                raise ValueError("Scheduled pricing requires a price feed URL")
+            if binding.logistics_interval_seconds and not binding.tracking_feed_url:
+                raise ValueError("Scheduled logistics requires a tracking feed URL")
             if bool(binding.outbound_url) != bool(binding.outbound_secret):
                 raise ValueError(
                     "Outbound destination and signing secret must be configured together"

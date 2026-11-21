@@ -55,6 +55,12 @@ jobs:
       - run: uv run pytest --cov=clos.domain --cov=clos.application --cov-report=term-missing --cov-fail-under=85
       - run: uv run pytest evals/
       - run: uv run python benchmarks/run_retrieval.py --sizes 128 --queries 32 --min-hybrid-recall 0.95
+      - run: uv run --locked python benchmarks/run_api_load.py --users 4 --seconds 15
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-load
+          path: benchmarks/results/*-api.json
       - run: npx --yes @stoplight/spectral-cli lint --ruleset .spectral.yaml docs/api/openapi.yaml
       - run: npx --yes @asyncapi/cli validate docs/api/asyncapi.yaml
       - run: npm install --global @mermaid-js/mermaid-cli

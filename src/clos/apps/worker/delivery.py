@@ -64,21 +64,39 @@ async def apply_event(db: AsyncSession, job: AsyncJob) -> UUID:
             await db.flush()
         return order.id
     update = TrackingUpdate.model_validate(job.payload)
+    await record_tracking(db, job.tenant_id, update)
+    return update.shipment_id
+
+
+async def record_tracking(db: AsyncSession, tenant: UUID, update: TrackingUpdate) -> None:
     shipment = await db.scalar(
         select(Shipment)
-        .where(Shipment.id == update.shipment_id, Shipment.tenant_id == job.tenant_id)
+        .where(Shipment.id == update.shipment_id, Shipment.tenant_id == tenant)
         .with_for_update()
     )
     if not shipment:
         raise LookupError("Unknown shipment")
     last = await db.scalar(
         select(func.max(ShipmentEvent.occurred_at)).where(
-            ShipmentEvent.tenant_id == job.tenant_id, ShipmentEvent.shipment_id == shipment.id
+            ShipmentEvent.tenant_id == tenant, ShipmentEvent.shipment_id == shipment.id
         )
     )
+    duplicate = await db.scalar(
+        select(ShipmentEvent.id)
+        .where(
+            ShipmentEvent.tenant_id == tenant,
+            ShipmentEvent.shipment_id == shipment.id,
+            ShipmentEvent.occurred_at == update.occurred_at,
+            ShipmentEvent.event_type == "carrier_tracking",
+            ShipmentEvent.payload["status"].as_string() == update.status,
+        )
+        .limit(1)
+    )
+    if duplicate:
+        return
     db.add(
         ShipmentEvent(
-            tenant_id=job.tenant_id,
+            tenant_id=tenant,
             shipment_id=shipment.id,
             event_type="carrier_tracking",
             occurred_at=update.occurred_at,
@@ -87,7 +105,7 @@ async def apply_event(db: AsyncSession, job: AsyncJob) -> UUID:
     )
     if not last or update.occurred_at >= last:
         shipment.status = update.status
-    return shipment.id
+    await db.flush()
 
 
 async def scan(
@@ -98,7 +116,10 @@ async def scan(
         count = await db.scalar(
             select(func.count())
             .select_from(InventoryItem)
-            .where(InventoryItem.tenant_id == tenant, InventoryItem.quantity <= 0)
+            .where(
+                InventoryItem.tenant_id == tenant,
+                InventoryItem.quantity <= InventoryItem.reserved_quantity,
+            )
         )
         details: dict[str, object] = {"out_of_stock": count or 0}
     else:
@@ -111,8 +132,14 @@ async def scan(
         observations: list[dict[str, object]] = []
         if job.kind == "pricing":
             for price in TypeAdapter(list[PriceObservation]).validate_json(body):
-                listing = await db.get(CompetitorListing, price.listing_id)
-                if listing and listing.currency == price.currency:
+                listing = await db.get(CompetitorListing, price.listing_id, with_for_update=True)
+                if (
+                    listing
+                    and listing.currency == price.currency
+                    and job.created_at >= listing.observed_at
+                ):
+                    listing.price = price.price
+                    listing.observed_at = job.created_at
                     observations.append(
                         {
                             "listing_id": str(listing.id),
@@ -123,6 +150,7 @@ async def scan(
         else:
             for track in TypeAdapter(list[TrackingUpdate]).validate_json(body):
                 if await db.get(Shipment, track.shipment_id):
+                    await record_tracking(db, tenant, track)
                     observations.append(track.model_dump(mode="json"))
         details = {"observations": observations}
     db.add(

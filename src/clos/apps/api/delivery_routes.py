@@ -114,7 +114,19 @@ async def stream(
 
     async def frames() -> AsyncIterator[str]:
         cursor = start
+        next_check = time.monotonic() + 15
         while not await request.is_disconnected():
+            if time.monotonic() >= next_check:
+                try:
+                    async with factory(request).begin() as db:
+                        current = await authenticate(
+                            request.headers.get("Authorization"), get_auth_service(db)
+                        )
+                    require(current, "read")
+                    await enforce(request, current.tenant_id, str(current.user_id))
+                except (AuthenticationError, HTTPException):
+                    return
+                next_check = time.monotonic() + 15
             rows, state = await journal.page(cursor)
             for row in rows:
                 cursor = row.position

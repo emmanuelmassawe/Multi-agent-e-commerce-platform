@@ -194,10 +194,10 @@ class ToolRegistry:
                 elapsed = time.monotonic() - self._started_at
                 self._budget.check_time(elapsed)
                 remaining = self._budget.limits.max_wall_seconds - elapsed
+                if rejected_approval_id is not None:
+                    return {"status": "rejected", "approval_id": str(rejected_approval_id)}
+                await emit("tool_started", tool=name, attempt=attempt + 1)
                 try:
-                    if rejected_approval_id is not None:
-                        return {"status": "rejected", "approval_id": str(rejected_approval_id)}
-                    await emit("tool_started", tool=name, attempt=attempt + 1)
                     result = await asyncio.wait_for(
                         spec.handler(parsed, execution_context),
                         timeout=min(spec.timeout_seconds, remaining),
